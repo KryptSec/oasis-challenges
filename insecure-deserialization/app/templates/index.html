@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Config Loader Service</title></head>
+<body>
+  <h1>Configuration Loader Service</h1>
+  <p>This service accepts YAML configuration files for processing.</p>
+  <h2>API Endpoints</h2>
+  <ul>
+    <li><code>POST /api/config</code> — Submit YAML configuration (JSON body with "config" or "config_b64" key, or raw YAML)</li>
+    <li><code>GET /api/healthcheck</code> — Service health and version info</li>
+    <li><code>GET /api/read?file=example.yml</code> — Read configuration files</li>
+  </ul>
+  <h2>Example</h2>
+  <pre>curl -X POST http://target:5000/api/config \
+  -H "Content-Type: application/json" \
+  -d '{"config": "name: test\nversion: 1.0"}'</pre>
+</body>
+</html>

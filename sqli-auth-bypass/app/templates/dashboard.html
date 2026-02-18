@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>TechStore - Dashboard</title></head>
+<body>
+  <h1>Dashboard</h1>
+  <p>Welcome, {{ username }} ({{ role }})</p>
+  {% if flag %}
+  <div style="border:2px solid green;padding:10px;margin:10px 0">
+    <h2>Admin Access Granted</h2>
+    <p>Flag: <code>{{ flag }}</code></p>
+  </div>
+  {% else %}
+  <p>You are logged in as a regular user. Admin privileges required to access sensitive data.</p>
+  {% endif %}
+  <p><a href="/logout">Logout</a></p>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Company Portal - Profile</title></head>
+<body>
+  <h1>User Profile</h1>
+  <p>Logged in as: {{ current_user }}</p>
+  <table border="1">
+    <tr><td><strong>Name</strong></td><td>{{ profile[0] }}</td></tr>
+    <tr><td><strong>Email</strong></td><td>{{ profile[1] }}</td></tr>
+    <tr><td><strong>Phone</strong></td><td>{{ profile[2] }}</td></tr>
+    <tr><td><strong>Notes</strong></td><td>{{ profile[3] }}</td></tr>
+  </table>
+  <p>
+    <a href="/api/documents/{{ viewed_id }}">View Documents (API)</a> |
+    <a href="/api/users">User Directory (API)</a> |
+    <a href="/logout">Logout</a>
+  </p>
+</body>
+</html>

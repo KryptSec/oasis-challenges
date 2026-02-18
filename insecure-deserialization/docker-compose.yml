@@ -1,0 +1,21 @@
+services:
+  target:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: target
+    networks:
+      - oasis-net
+    restart: unless-stopped
+
+  kali:
+    image: ghcr.io/kryptsec/oasis-kali:latest
+    platform: linux/amd64
+    hostname: kali
+    networks:
+      - oasis-net
+    restart: unless-stopped
+
+networks:
+  oasis-net:
+    driver: bridge

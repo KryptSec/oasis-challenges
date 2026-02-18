@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head><title>Corporate Portal - Dashboard</title></head>
+<body>
+  <h1>Employee Dashboard</h1>
+  <table border="1">
+    <tr><td><strong>Username</strong></td><td>{{ username }}</td></tr>
+    <tr><td><strong>Email</strong></td><td>{{ email }}</td></tr>
+    <tr><td><strong>Department</strong></td><td>{{ department }}</td></tr>
+    <tr><td><strong>Role</strong></td><td>{{ role }}</td></tr>
+  </table>
+
+  <h2>Navigation</h2>
+  <ul>
+    <li><a href="/profile">Update Profile</a></li>
+    {% if role == 'admin' %}
+    <li><a href="/admin">Admin Panel</a></li>
+    {% else %}
+    <li>Admin Panel (admin only)</li>
+    {% endif %}
+  </ul>
+
+  {% if flag %}
+  <div style="border:2px solid green;padding:10px;margin:10px 0">
+    <h2>Admin Access Key</h2>
+    <p>Flag: <code>{{ flag }}</code></p>
+  </div>
+  {% else %}
+  <p><em>Access key only visible to admin users.</em></p>
+  {% endif %}
+
+  <p><a href="/logout">Logout</a></p>
+</body>
+</html>

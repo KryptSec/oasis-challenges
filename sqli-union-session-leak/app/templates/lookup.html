@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Employee Directory</title></head>
+<body>
+  <h1>Employee Directory Lookup</h1>
+  <form method="POST">
+    <label>Search by Department: <input type="text" name="department" placeholder="e.g. Engineering"></label>
+    <button type="submit">Search</button>
+  </form>
+
+  {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+
+  {% if flag %}
+  <div style="border:2px solid green;padding:10px;margin:10px 0">
+    <h2>Sensitive Data Exposed</h2>
+    <p>Flag: <code>{{ flag }}</code></p>
+  </div>
+  {% endif %}
+
+  {% if results %}
+  <table border="1">
+    <tr><th>Name</th><th>Department</th></tr>
+    {% for r in results %}
+    <tr><td>{{ r[0] }}</td><td>{{ r[1] }}</td></tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</body>
+</html>

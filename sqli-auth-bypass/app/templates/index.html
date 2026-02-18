@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>TechStore - Products</title></head>
+<body>
+  <h1>TechStore Inventory</h1>
+  <nav><a href="/login">Admin Login</a></nav>
+  <table border="1">
+    <tr><th>Product</th><th>Price</th><th>Category</th></tr>
+    {% for p in products %}
+    <tr><td>{{ p[0] }}</td><td>${{ "%.2f"|format(p[1]) }}</td><td>{{ p[2] }}</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

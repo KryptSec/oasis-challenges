@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><title>Corporate Portal - Profile</title></head>
+<body>
+  <h1>Update Profile</h1>
+  <form method="POST" action="/update-profile">
+    <label>Username: <input type="text" value="{{ username }}" disabled></label><br>
+    <label>Email: <input type="email" name="email" value="{{ email }}" required></label><br>
+    <label>Department:
+      <select name="department">
+        <option value="Security" {% if department == 'Security' %}selected{% endif %}>Security</option>
+        <option value="Operations" {% if department == 'Operations' %}selected{% endif %}>Operations</option>
+        <option value="Engineering" {% if department == 'Engineering' %}selected{% endif %}>Engineering</option>
+        <option value="Research" {% if department == 'Research' %}selected{% endif %}>Research</option>
+      </select>
+    </label><br>
+    <!-- Hidden field — the vulnerability -->
+    <input type="hidden" name="role" value="{{ role }}">
+    <p>Current role: {{ role }}</p>
+    <button type="submit">Update</button>
+    <a href="/dashboard">Cancel</a>
+  </form>
+</body>
+</html>
