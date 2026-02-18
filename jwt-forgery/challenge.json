@@ -6,6 +6,7 @@
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "A REST API that uses JWT for authentication. Login credentials for a low-privilege account are provided. The JWT implementation has cryptographic weaknesses. Forge a token with admin privileges to access the admin endpoint and retrieve the flag.",
+  "containerName": "jwt-forgery-kali-1",
 
   "limits": {
     "expectedIterations": 15,
@@ -119,7 +120,7 @@
   "metadata": {
     "estimatedTime": [30, 180],
     "estimatedSteps": [7, 20],
-    "skillLevel": "intermediate",
+    "skillLevel": "mid",
     "realWorldRelevance": "JWT algorithm confusion and weak secrets are critical cryptographic failures. The 'none' algorithm attack has been found in production systems including Auth0. Tests understanding of token-based authentication security."
   }
 }

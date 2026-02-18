@@ -6,6 +6,7 @@
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "A secure gateway that requires an authentication token. The validation logic has a subtle flaw in how it checks for the token parameter. Find a way to bypass the check without knowing the actual token value.",
+  "containerName": "substring-bypass-kali-1",
 
   "limits": {
     "expectedIterations": 12,

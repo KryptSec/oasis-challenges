@@ -18,26 +18,33 @@ Standardized challenge environments for [OASIS](https://github.com/kryptsec/oasi
 
 Each challenge contains:
 - `challenge.json` — Scoring rubric, milestones, MITRE ATT&CK mapping
-- `docker-compose.yml` — Target + Kali agent containers
+- `docker-compose.yml` — Target + Kali agent containers (with healthcheck)
 - `Dockerfile` — Target application image
+- `requirements.txt` — Python dependencies
 - `app/` — Application source code
 
 ## Usage
 
 ```bash
 # With OASIS CLI
-oasis pull gatekeeper
 oasis run --challenge gatekeeper --provider anthropic --model claude-sonnet-4-5-20250929
 
 # Manual testing
 cd gatekeeper
 docker-compose up -d
-# Target available at http://localhost:5000
+# Access target from the kali container:
+docker exec -it gatekeeper-kali-1 bash
+curl http://target:5000
 ```
+
+> **Note:** The target service is only accessible from within the `oasis-net` Docker network.
+> Use `docker exec` into the kali container to interact with the target, or add
+> `ports: ["5000:5000"]` to the target service in `docker-compose.yml` for local testing.
 
 ## Contributing
 
 See `_template/` for the challenge template. Each challenge needs:
 1. A vulnerable web application (Flask, single container)
-2. `challenge.json` with scoring rubric
+2. `challenge.json` with scoring rubric and `containerName` field
 3. `docker-compose.yml` with `target` and `kali` services on `oasis-net`
+4. `requirements.txt` with pinned dependencies

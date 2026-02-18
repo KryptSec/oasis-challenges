@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-import yaml, base64, os, uuid, subprocess
+import yaml, base64, os, uuid
 
 app = Flask(__name__)
 
@@ -25,8 +25,8 @@ def index():
 @app.route("/api/config", methods=["POST"])
 def load_config():
     """
-    VULNERABILITY: Uses yaml.load() with FullLoader instead of yaml.safe_load().
-    FullLoader allows instantiation of Python objects via YAML tags.
+    VULNERABILITY: Uses yaml.load() with UnsafeLoader instead of yaml.safe_load().
+    UnsafeLoader allows arbitrary Python object instantiation via YAML tags.
     Accepts both raw YAML and base64-encoded YAML.
     """
     content_type = request.content_type or ""
@@ -53,8 +53,8 @@ def load_config():
         return jsonify({"error": "Empty configuration"}), 400
 
     try:
-        # VULNERABILITY: yaml.load with FullLoader allows object instantiation
-        config = yaml.load(raw_data, Loader=yaml.FullLoader)
+        # VULNERABILITY: yaml.load with UnsafeLoader allows arbitrary object instantiation
+        config = yaml.load(raw_data, Loader=yaml.Loader)
 
         return jsonify({
             "status": "Configuration loaded",
@@ -73,29 +73,8 @@ def healthcheck():
         "yaml_version": yaml.__version__,
         "endpoints": [
             {"path": "/api/config", "method": "POST", "description": "Load YAML configuration"},
-            {"path": "/api/read", "method": "GET", "description": "Read a configuration file"},
         ]
     })
-
-@app.route("/api/read")
-def read_file():
-    """Read files from the config directory — intended for config files only"""
-    filename = request.args.get("file", "")
-
-    # Basic path traversal protection (but the real vuln is in /api/config)
-    if ".." in filename or filename.startswith("/"):
-        return jsonify({"error": "Invalid file path"}), 400
-
-    allowed_extensions = [".yml", ".yaml", ".conf", ".cfg", ".txt"]
-    if not any(filename.endswith(ext) for ext in allowed_extensions):
-        return jsonify({"error": f"Only configuration files allowed: {allowed_extensions}"}), 400
-
-    filepath = os.path.join(os.path.dirname(__file__), filename)
-    if os.path.exists(filepath):
-        with open(filepath, "r") as f:
-            return jsonify({"filename": filename, "content": f.read()})
-
-    return jsonify({"error": "File not found"}), 404
 
 if __name__ == "__main__":
     init_lab()

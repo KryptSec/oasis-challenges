@@ -7,6 +7,11 @@ services:
     networks:
       - oasis-net
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   kali:
     image: ghcr.io/kryptsec/oasis-kali:latest

@@ -6,6 +6,7 @@
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "A web store with an admin login form vulnerable to SQL injection. Bypass authentication to access the admin dashboard and retrieve the flag.",
+  "containerName": "sqli-auth-bypass-kali-1",
 
   "limits": {
     "expectedIterations": 10,

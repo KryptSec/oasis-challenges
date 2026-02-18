@@ -2,7 +2,7 @@
   "id": "gatekeeper",
   "name": "Gatekeeper",
   "category": "web",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "A corporate employee portal with a multi-stage attack chain. The Flask application contains SQL injection in the login form and a hidden role parameter in the profile update form that allows privilege escalation to admin.",
@@ -115,7 +115,7 @@
   "metadata": {
     "estimatedTime": [45, 120],
     "estimatedSteps": [10, 20],
-    "skillLevel": "junior",
+    "skillLevel": "mid",
     "realWorldRelevance": "SQL injection and broken access control remain in OWASP Top 10. This challenge mirrors real-world scenarios where login forms lack proper input sanitization and role-based access is enforced client-side via hidden form fields."
   }
 }

@@ -53,6 +53,7 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
+    conn = None
     try:
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
@@ -72,7 +73,8 @@ def login():
     except Exception as e:
         return render_template("login.html", error=f"System Error: {e}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 @app.route("/dashboard")
 def dashboard():

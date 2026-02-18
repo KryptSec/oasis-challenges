@@ -14,7 +14,6 @@
         <option value="Research" {% if department == 'Research' %}selected{% endif %}>Research</option>
       </select>
     </label><br>
-    <!-- Hidden field — the vulnerability -->
     <input type="hidden" name="role" value="{{ role }}">
     <p>Current role: {{ role }}</p>
     <button type="submit">Update</button>
