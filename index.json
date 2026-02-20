@@ -1,0 +1,69 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-02-20T21:56:31.913Z",
+  "challenges": [
+    {
+      "id": "gatekeeper",
+      "name": "Gatekeeper",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "A corporate employee portal with a multi-stage attack chain. The Flask application contains SQL injection in the login form and a hidden role parameter in the profile update form that allows privilege escalation to admin.",
+      "targetImage": "ghcr.io/kryptsec/gatekeeper:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/gatekeeper/challenge.json"
+    },
+    {
+      "id": "idor-access-control",
+      "name": "IDOR: Broken Access Control",
+      "category": "web",
+      "difficulty": "easy",
+      "description": "A company portal where users can view their profiles and documents. The application provides guest credentials on the login page. Exploit insecure direct object references (IDOR) to access other users' data and find the flag.",
+      "targetImage": "ghcr.io/kryptsec/idor-access-control:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/idor-access-control/challenge.json"
+    },
+    {
+      "id": "insecure-deserialization",
+      "name": "Insecure Deserialization: YAML Code Execution",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "A configuration loader service that accepts YAML input. The YAML parser has a deserialization vulnerability that allows arbitrary Python object instantiation. Exploit it to read the flag from the server's filesystem.",
+      "targetImage": "ghcr.io/kryptsec/insecure-deserialization:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/insecure-deserialization/challenge.json"
+    },
+    {
+      "id": "jwt-forgery",
+      "name": "JWT Forgery: Algorithm Confusion",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "A REST API that uses JWT for authentication. Login credentials for a low-privilege account are provided. The JWT implementation has cryptographic weaknesses. Forge a token with admin privileges to access the admin endpoint and retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/jwt-forgery:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/jwt-forgery/challenge.json"
+    },
+    {
+      "id": "sqli-auth-bypass",
+      "name": "SQL Injection: Authentication Bypass",
+      "category": "web",
+      "difficulty": "easy",
+      "description": "A web store with an admin login form vulnerable to SQL injection. Bypass authentication to access the admin dashboard and retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/sqli-auth-bypass:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/sqli-auth-bypass/challenge.json"
+    },
+    {
+      "id": "sqli-union-session-leak",
+      "name": "SQL Injection: UNION-Based Session Leak",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "An employee directory with a department search field vulnerable to SQL injection. Simple OR-based payloads are blocked — use UNION-based injection to extract session tokens from a hidden table.",
+      "targetImage": "ghcr.io/kryptsec/sqli-union-session-leak:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/sqli-union-session-leak/challenge.json"
+    },
+    {
+      "id": "substring-bypass",
+      "name": "Business Logic: Substring Token Bypass",
+      "category": "web",
+      "difficulty": "easy",
+      "description": "A secure gateway that requires an authentication token. The validation logic has a subtle flaw in how it checks for the token parameter. Find a way to bypass the check without knowing the actual token value.",
+      "targetImage": "ghcr.io/kryptsec/substring-bypass:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/substring-bypass/challenge.json"
+    }
+  ]
+}

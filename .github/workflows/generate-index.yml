@@ -1,0 +1,33 @@
+name: Generate Challenge Registry Index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '*/challenge.json'
+      - 'scripts/generate-index.js'
+      - '.github/workflows/generate-index.yml'
+  workflow_dispatch:
+
+jobs:
+  generate-index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate index.json
+        run: node scripts/generate-index.js
+
+      - name: Commit index.json if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add index.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: update challenge registry index [skip ci]" && git push)
