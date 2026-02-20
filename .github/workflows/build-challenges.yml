@@ -1,0 +1,76 @@
+name: Build and Push Challenge Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'gatekeeper/**'
+      - 'idor-access-control/**'
+      - 'insecure-deserialization/**'
+      - 'jwt-forgery/**'
+      - 'sqli-auth-bypass/**'
+      - 'sqli-union-session-leak/**'
+      - 'substring-bypass/**'
+      - '.github/workflows/build-challenges.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/kryptsec
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        challenge:
+          - gatekeeper
+          - idor-access-control
+          - insecure-deserialization
+          - jwt-forgery
+          - sqli-auth-bypass
+          - sqli-union-session-leak
+          - substring-bypass
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/${{ matrix.challenge }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+            type=ref,event=branch
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./${{ matrix.challenge }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/KryptSec/oasis-challenges
+            org.opencontainers.image.description=OASIS challenge: ${{ matrix.challenge }}
+            org.opencontainers.image.licenses=MIT
+          cache-from: type=gha,scope=${{ matrix.challenge }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.challenge }}
