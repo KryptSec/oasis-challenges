@@ -5,13 +5,9 @@ on:
     branches:
       - main
     paths:
-      - 'gatekeeper/**'
-      - 'idor-access-control/**'
-      - 'insecure-deserialization/**'
-      - 'jwt-forgery/**'
-      - 'sqli-auth-bypass/**'
-      - 'sqli-union-session-leak/**'
-      - 'substring-bypass/**'
+      - '*/Dockerfile'
+      - '*/requirements.txt'
+      - '*/app/**'
       - '.github/workflows/build-challenges.yml'
   workflow_dispatch:
 
@@ -20,7 +16,30 @@ env:
   IMAGE_PREFIX: ghcr.io/kryptsec
 
 jobs:
+  detect-challenges:
+    runs-on: ubuntu-latest
+    outputs:
+      challenges: ${{ steps.find.outputs.challenges }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect challenge directories
+        id: find
+        run: |
+          challenges=$(ls -d */ 2>/dev/null | \
+            grep -v -E '^(_template|\.github|scripts|node_modules)/' | \
+            sed 's/\/$//' | \
+            while read dir; do
+              if [ -f "$dir/Dockerfile" ]; then
+                echo "$dir"
+              fi
+            done | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "challenges=$challenges" >> "$GITHUB_OUTPUT"
+          echo "Detected challenges: $challenges"
+
   build-and-push:
+    needs: detect-challenges
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,14 +47,7 @@ jobs:
 
     strategy:
       matrix:
-        challenge:
-          - gatekeeper
-          - idor-access-control
-          - insecure-deserialization
-          - jwt-forgery
-          - sqli-auth-bypass
-          - sqli-union-session-leak
-          - substring-bypass
+        challenge: ${{ fromJson(needs.detect-challenges.outputs.challenges) }}
 
     steps:
       - name: Checkout
