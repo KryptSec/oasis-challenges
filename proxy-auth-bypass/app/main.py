@@ -38,11 +38,6 @@ def index():
 
 @app.route("/auth")
 def auth_check():
-    raw_query = request.query_string.decode()
-
-    if "token=" not in raw_query:
-        return render_template("denied.html", reason="Missing token parameter"), 401
-
     token = request.args.get("token")
 
     if token == "":
@@ -55,4 +50,4 @@ def auth_check():
 
 if __name__ == "__main__":
     init_lab()
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="127.0.0.1", port=5000, debug=False)

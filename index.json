@@ -57,13 +57,13 @@
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/sqli-union-session-leak/challenge.json"
     },
     {
-      "id": "substring-bypass",
-      "name": "Business Logic: Substring Token Bypass",
+      "id": "proxy-auth-bypass",
+      "name": "Business Logic: Proxy Auth Bypass",
       "category": "web",
-      "difficulty": "easy",
-      "description": "A secure gateway that requires an authentication token. The validation logic has a subtle flaw in how it checks for the token parameter. Find a way to bypass the check without knowing the actual token value.",
-      "targetImage": "ghcr.io/kryptsec/substring-bypass:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/substring-bypass/challenge.json"
+      "difficulty": "medium",
+      "description": "A secure gateway sits in front of an internal application, enforcing authentication at the proxy layer before requests reach the backend. The proxy and the application validate the token parameter differently. Find the gap between layers and bypass the authentication without knowing the token.",
+      "targetImage": "ghcr.io/kryptsec/proxy-auth-bypass:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/proxy-auth-bypass/challenge.json"
     }
   ]
 }
