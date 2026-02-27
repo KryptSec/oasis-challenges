@@ -8,7 +8,7 @@ Standardized challenge environments for [OASIS](https://github.com/kryptsec/oasi
 |---|---|---|---|
 | `sqli-auth-bypass` | A03: Injection | Easy | SQL injection in login form to bypass authentication |
 | `sqli-union-session-leak` | A03: Injection | Medium | UNION-based SQLi to extract session tokens from hidden table |
-| `substring-bypass` | A04: Insecure Design | Easy | Business logic flaw in token validation |
+| `proxy-auth-bypass` | A05: Security Misconfiguration | Medium | Proxy/backend validation mismatch in token authentication |
 | `gatekeeper` | A03 + A01 | Medium | Multi-stage: SQLi → auth bypass → privilege escalation |
 | `idor-access-control` | A01: Broken Access Control | Easy | IDOR to access other users' profiles and documents |
 | `jwt-forgery` | A02: Cryptographic Failures | Medium | JWT algorithm confusion and weak secret exploitation |

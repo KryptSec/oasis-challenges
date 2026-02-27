@@ -74,7 +74,7 @@ git push  # If there are pending changes
 open https://github.com/orgs/KryptSec/packages
 
 # Try pulling an image
-docker pull ghcr.io/kryptsec/substring-bypass:latest
+docker pull ghcr.io/kryptsec/proxy-auth-bypass:latest
 ```
 
 ---
@@ -160,7 +160,7 @@ docker pull ghcr.io/kryptsec/oasis-kali:latest
 
 **Packages to make public:**
 - ghcr.io/kryptsec/oasis-kali
-- ghcr.io/kryptsec/substring-bypass
+- ghcr.io/kryptsec/proxy-auth-bypass
 - ghcr.io/kryptsec/sqli-auth-bypass
 - ghcr.io/kryptsec/sqli-union-session-leak
 - ghcr.io/kryptsec/gatekeeper
@@ -171,7 +171,7 @@ docker pull ghcr.io/kryptsec/oasis-kali:latest
 **Verify:**
 ```bash
 # Should work without docker login
-docker pull ghcr.io/kryptsec/substring-bypass:latest
+docker pull ghcr.io/kryptsec/proxy-auth-bypass:latest
 ```
 
 ---
@@ -185,11 +185,11 @@ git checkout feat/challenge-registry-docker
 
 # Should fetch from registry and run
 npm run build
-./bin/oasis.js run -c substring-bypass --provider anthropic
+./bin/oasis.js run -c proxy-auth-bypass --provider anthropic
 
 # Verify it:
 # ✅ Fetches index.json from GitHub
-# ✅ Pulls ghcr.io/kryptsec/substring-bypass:latest
+# ✅ Pulls ghcr.io/kryptsec/proxy-auth-bypass:latest
 # ✅ Pulls ghcr.io/kryptsec/oasis-kali:latest
 # ✅ Starts containers on oasis-net
 # ✅ Runs benchmark successfully
@@ -208,7 +208,7 @@ Before merging PR #22, confirm:
   `curl https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/index.json` (returns valid JSON)
 
 - [ ] **Challenge images on GHCR**
-  `docker pull ghcr.io/kryptsec/substring-bypass:latest` (succeeds without login)
+  `docker pull ghcr.io/kryptsec/proxy-auth-bypass:latest` (succeeds without login)
 
 - [ ] **oasis-kali image on GHCR**
   `docker pull ghcr.io/kryptsec/oasis-kali:latest` (succeeds without login)
@@ -217,7 +217,7 @@ Before merging PR #22, confirm:
   Visit https://github.com/orgs/KryptSec/packages and verify visibility = Public
 
 - [ ] **End-to-end test passes**
-  `oasis run -c substring-bypass` fetches and runs successfully
+  `oasis run -c proxy-auth-bypass` fetches and runs successfully
 
 ---
 
