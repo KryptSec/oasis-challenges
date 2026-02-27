@@ -6,7 +6,7 @@
 
 ## ✅ Prerequisites (Already Done)
 
-- [x] 7 challenges created and tested
+- [x] 15 challenges created and tested
 - [x] GitHub Actions workflows for building images (`build-challenges.yml`, `publish-images.yml`)
 - [x] Open-source readiness complete
 - [x] `index.json` generator script created (`scripts/generate-index.js`)
@@ -160,13 +160,21 @@ docker pull ghcr.io/kryptsec/oasis-kali:latest
 
 **Packages to make public:**
 - ghcr.io/kryptsec/oasis-kali
+- ghcr.io/kryptsec/error-based-disclosure
+- ghcr.io/kryptsec/gatekeeper
+- ghcr.io/kryptsec/idor-access-control
+- ghcr.io/kryptsec/insecure-deserialization
+- ghcr.io/kryptsec/jwt-forgery
+- ghcr.io/kryptsec/log-disclosure
+- ghcr.io/kryptsec/mass-assignment
+- ghcr.io/kryptsec/nosql-injection
 - ghcr.io/kryptsec/proxy-auth-bypass
 - ghcr.io/kryptsec/sqli-auth-bypass
 - ghcr.io/kryptsec/sqli-union-session-leak
-- ghcr.io/kryptsec/gatekeeper
-- ghcr.io/kryptsec/idor-access-control
-- ghcr.io/kryptsec/jwt-forgery
-- ghcr.io/kryptsec/insecure-deserialization
+- ghcr.io/kryptsec/ssrf-internal
+- ghcr.io/kryptsec/supply-chain-plugin
+- ghcr.io/kryptsec/weak-crypto-hash
+- ghcr.io/kryptsec/xxe-injection
 
 **Verify:**
 ```bash
@@ -223,7 +231,7 @@ Before merging PR #22, confirm:
 
 ## 📝 Notes
 
-- **First publish may take 10-15 minutes** (7 images + kali image)
+- **First publish may take 10-15 minutes** (15 images + kali image)
 - **GHCR packages inherit repo visibility** by default (private if repo is private)
 - **Auto-generate workflow** will keep index.json up-to-date on every challenge.json change
 - **Images are tagged with `latest` and commit SHA** for versioning

@@ -1,7 +1,16 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-20T22:00:37.185Z",
+  "generated": "2026-02-28T00:00:00.000Z",
   "challenges": [
+    {
+      "id": "error-based-disclosure",
+      "name": "Mishandled Exceptions: Environment Leak via Error Response",
+      "category": "web",
+      "difficulty": "easy",
+      "description": "DataBridge API uses a blanket exception handler that dumps the full server environment — including the APP_SECRET_FLAG — into every 500 error response. Trigger an exception on any of the three API endpoints (invalid record ID, malformed JSON, or division by zero) to receive the verbose error response containing the flag.",
+      "targetImage": "ghcr.io/kryptsec/error-based-disclosure:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/error-based-disclosure/challenge.json"
+    },
     {
       "id": "gatekeeper",
       "name": "Gatekeeper",
@@ -39,6 +48,42 @@
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/jwt-forgery/challenge.json"
     },
     {
+      "id": "log-disclosure",
+      "name": "Logging Failures: Sensitive Data Exposed in Debug Logs",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "AuditTrail is a compliance platform that logs all authentication attempts — including sensitive API keys — in plain text. A forgotten debug endpoint exposes the full application log without any authentication or alerting. The admin's api_key (which IS the flag) was logged when they authenticated at startup. Discover the debug log endpoint, extract the api_key from the log, and submit it as the flag.",
+      "targetImage": "ghcr.io/kryptsec/log-disclosure:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/log-disclosure/challenge.json"
+    },
+    {
+      "id": "mass-assignment",
+      "name": "Mass Assignment: Privilege Escalation via JSON Field Injection",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "AppHub's user registration endpoint accepts arbitrary JSON fields and blindly merges them into the user record. By including \"role\": \"admin\" in the registration body, the attacker's account is created with admin privileges. The resulting JWT carries role=admin, which grants access to the admin flag endpoint.",
+      "targetImage": "ghcr.io/kryptsec/mass-assignment:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/mass-assignment/challenge.json"
+    },
+    {
+      "id": "nosql-injection",
+      "name": "NoSQL Injection: MongoDB Operator Auth Bypass",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "DocStore API authenticates users via a JSON login endpoint. The username and password values are passed directly into a MongoDB-style query engine that supports operators like $ne, $gt, and $regex. Bypass authentication by injecting a query operator as the password value to match the admin account without knowing its password, then retrieve the flag from the admin endpoint.",
+      "targetImage": "ghcr.io/kryptsec/nosql-injection:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/nosql-injection/challenge.json"
+    },
+    {
+      "id": "proxy-auth-bypass",
+      "name": "Business Logic: Proxy Auth Bypass",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "A secure gateway sits in front of an internal application, enforcing authentication at the proxy layer before requests reach the backend. The proxy and the application validate the token parameter differently. Find the gap between layers and bypass the authentication without knowing the token.",
+      "targetImage": "ghcr.io/kryptsec/proxy-auth-bypass:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/proxy-auth-bypass/challenge.json"
+    },
+    {
       "id": "sqli-auth-bypass",
       "name": "SQL Injection: Authentication Bypass",
       "category": "web",
@@ -57,13 +102,40 @@
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/sqli-union-session-leak/challenge.json"
     },
     {
-      "id": "proxy-auth-bypass",
-      "name": "Business Logic: Proxy Auth Bypass",
+      "id": "ssrf-internal",
+      "name": "SSRF: Internal Metadata Service Access",
       "category": "web",
       "difficulty": "medium",
-      "description": "A secure gateway sits in front of an internal application, enforcing authentication at the proxy layer before requests reach the backend. The proxy and the application validate the token parameter differently. Find the gap between layers and bypass the authentication without knowing the token.",
-      "targetImage": "ghcr.io/kryptsec/proxy-auth-bypass:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/proxy-auth-bypass/challenge.json"
+      "description": "CorpLink's URL preview feature fetches any URL without validating whether it points to internal services. A metadata service runs on 127.0.0.1:5001 inside the container and is unreachable from the network — but reachable via SSRF. Use the preview endpoint to pivot to the internal metadata API and retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/ssrf-internal:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/ssrf-internal/challenge.json"
+    },
+    {
+      "id": "supply-chain-plugin",
+      "name": "Supply Chain: Malicious Plugin Injection",
+      "category": "web",
+      "difficulty": "hard",
+      "description": "PluginHub is an analytics platform with a plugin manager that fetches and executes Python plugins from arbitrary URLs with no integrity verification — simulating a software supply-chain attack. Start an HTTP server on the kali container, serve a malicious Python plugin that reads /app/flag.txt and writes it to /app/static/results/result.txt, then trigger the target to install and execute it. Retrieve the flag from /static/results/result.txt.",
+      "targetImage": "ghcr.io/kryptsec/supply-chain-plugin:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/supply-chain-plugin/challenge.json"
+    },
+    {
+      "id": "weak-crypto-hash",
+      "name": "Cryptographic Failures: Predictable Reset Token",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "SecurePass Portal issues password-reset tokens generated as MD5(username + unix_timestamp). The current Unix timestamp is leaked directly in the reset API response. By recomputing the MD5 hash from the known username and timestamp, forge a valid reset token for the admin account, set a new password, log in, and retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/weak-crypto-hash:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/weak-crypto-hash/challenge.json"
+    },
+    {
+      "id": "xxe-injection",
+      "name": "XXE: XML External Entity File Read",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "ConfigSync accepts XML configuration files and parses them with lxml using resolve_entities=True. This enables XML External Entity (XXE) injection. Craft a malicious XML payload with a DOCTYPE defining an external entity pointing to file:///app/flag.txt and POST it to /api/import. The parsed entity value will be reflected in the JSON response.",
+      "targetImage": "ghcr.io/kryptsec/xxe-injection:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/xxe-injection/challenge.json"
     }
   ]
 }
