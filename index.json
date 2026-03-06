@@ -143,7 +143,7 @@
       "name": "Broken Authentication: Username Enumeration",
       "category": "web",
       "difficulty": "easy",
-      "description": "AuthPortal responds differently for invalid usernames vs invalid passwords, enabling username enumeration. Use the differing error messages to discover a privileged account and then brute-force or bypass to retrieve the flag.",
+      "description": "HRPortal responds differently for invalid usernames vs invalid passwords, enabling username enumeration. Use /api/users and differential login responses to identify the admin account, then authenticate with the weak credential to retrieve the flag.",
       "targetImage": "ghcr.io/kryptsec/broken-auth-enum:latest",
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/broken-auth-enum/challenge.json"
     },
@@ -152,7 +152,7 @@
       "name": "Command Injection: Unsafe Shell Arguments",
       "category": "web",
       "difficulty": "medium",
-      "description": "A diagnostics endpoint accepts a filename and constructs a shell command without proper escaping. Inject shell metacharacters in the filename parameter to execute commands on the server and exfiltrate the flag.",
+      "description": "A diagnostics endpoint accepts a host parameter and interpolates it into shell commands (ping/nslookup) without proper escaping. Inject shell metacharacters in host to execute arbitrary commands and exfiltrate the flag.",
       "targetImage": "ghcr.io/kryptsec/cmd-injection:latest",
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/cmd-injection/challenge.json"
     },

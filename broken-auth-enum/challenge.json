@@ -82,6 +82,7 @@
         "penalty": -3
       },
       "bruteForce": {
+        "threshold": 20,
         "penalty": -10
       }
     }

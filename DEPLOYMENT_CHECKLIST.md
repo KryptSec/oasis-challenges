@@ -175,11 +175,11 @@ docker pull ghcr.io/kryptsec/oasis-kali:latest
 - ghcr.io/kryptsec/supply-chain-plugin
 - ghcr.io/kryptsec/weak-crypto-hash
 - ghcr.io/kryptsec/xxe-injection
- - ghcr.io/kryptsec/broken-auth-enum
- - ghcr.io/kryptsec/cmd-injection
- - ghcr.io/kryptsec/path-traversal
- - ghcr.io/kryptsec/upload-rce
- - ghcr.io/kryptsec/security-misconfiguration
+- ghcr.io/kryptsec/broken-auth-enum
+- ghcr.io/kryptsec/cmd-injection
+- ghcr.io/kryptsec/path-traversal
+- ghcr.io/kryptsec/upload-rce
+- ghcr.io/kryptsec/security-misconfiguration
 
 **Verify:**
 ```bash

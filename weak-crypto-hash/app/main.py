@@ -28,8 +28,9 @@ def init_lab():
     c.execute("CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT UNIQUE, password TEXT, role TEXT)")
     # Admin password stored as plain MD5 (another crypto failure)
     admin_hash = hashlib.md5("password123".encode()).hexdigest()
+    alice_hash = hashlib.md5("alice_pass".encode()).hexdigest()
     c.execute("INSERT INTO users VALUES (1,'admin',?,'admin')", (admin_hash,))
-    c.execute("INSERT INTO users VALUES (2,'alice','alice_pass','user')")
+    c.execute("INSERT INTO users VALUES (2,'alice',?,'user')", (alice_hash,))
     conn.commit()
     conn.close()
 

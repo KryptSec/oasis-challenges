@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory
+from werkzeug.utils import secure_filename
 import os, uuid, subprocess, traceback
 
 app = Flask(__name__)
@@ -49,8 +50,11 @@ def upload():
         if not f or f.filename == "":
             error = "No file selected."
         else:
-            # VULNERABLE: uses client-supplied filename, no extension check
-            filename  = f.filename
+            # Keep unrestricted upload behavior, but avoid path traversal on write.
+            filename  = secure_filename(f.filename)
+            if not filename:
+                error = "Invalid filename."
+                return render_template("upload.html", result=result, error=error)
             save_path = os.path.join(UPLOAD_DIR, filename)
             f.save(save_path)
             result = f"Uploaded: {filename}"
@@ -62,7 +66,9 @@ def api_upload():
     f = request.files.get("file")
     if not f:
         return jsonify({"error": "No file provided"}), 400
-    filename  = f.filename
+    filename  = secure_filename(f.filename)
+    if not filename:
+        return jsonify({"error": "Invalid filename"}), 400
     save_path = os.path.join(UPLOAD_DIR, filename)
     f.save(save_path)
     return jsonify({"status": "uploaded", "filename": filename})

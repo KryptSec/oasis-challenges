@@ -2,7 +2,7 @@
   "id": "path-traversal",
   "name": "Path Traversal: DocuVault File Leak",
   "category": "web",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "DocuVault is an internal document portal that serves files from a restricted directory. The file-viewing endpoint concatenates user input directly onto the base path without sanitisation. Escape the document root using path traversal to read the flag stored outside the served directory.",

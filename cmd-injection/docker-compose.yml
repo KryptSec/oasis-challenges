@@ -7,6 +7,8 @@ services:
     networks:
       - oasis-net
     restart: unless-stopped
+    cap_add:
+      - NET_RAW
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/"]
       interval: 5s

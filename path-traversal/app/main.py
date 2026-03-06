@@ -54,6 +54,8 @@ def view():
     filename = request.args.get("file", "")
     if not filename:
         return "Missing ?file= parameter", 400
+    if os.path.isabs(filename):
+        return "Absolute paths are not allowed", 400
 
     # VULNERABLE: no path normalisation / jail check
     file_path = os.path.join(BASE_DIR, filename)
@@ -77,6 +79,8 @@ def api_file():
     filename = request.args.get("file", "")
     if not filename:
         return {"error": "Missing file parameter"}, 400
+    if os.path.isabs(filename):
+        return {"error": "Absolute paths are not allowed"}, 400
 
     file_path = os.path.join(BASE_DIR, filename)
     try:

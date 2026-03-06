@@ -2,7 +2,7 @@
   "id": "security-misconfiguration",
   "name": "Security Misconfiguration: Debug Endpoint Exposure",
   "category": "web",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "CorpPortal is a corporate admin panel deployed to production with several misconfigurations left over from development. Debug endpoints are still active, robots.txt advertises hidden paths, and the application runs with debug mode enabled. Discover the exposed debug endpoint to retrieve the admin password, then log in to retrieve the flag.",

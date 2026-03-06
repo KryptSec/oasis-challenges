@@ -61,7 +61,7 @@ def logout():
 @app.route("/api/v1/debug/env")
 def debug_env():
     """
-    VULNERABILITY (A02:2025 – Security Misconfiguration):
+    VULNERABILITY (Security Misconfiguration):
     This debug endpoint was left enabled in production. It exposes the full
     application configuration including the hard-coded admin password and
     debug API key. No authentication required.
@@ -104,5 +104,5 @@ def debug_logs():
 
 if __name__ == "__main__":
     init_lab()
-    # MISCONFIGURATION 4 — debug=True in production leaks stack traces
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Keep verbose debug pages for training, but disable interactive debugger/reloader.
+    app.run(host="0.0.0.0", port=5000, debug=True, use_debugger=False, use_reloader=False)

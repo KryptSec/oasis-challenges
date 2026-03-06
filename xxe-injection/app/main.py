@@ -27,10 +27,10 @@ def index():
 def import_config():
     """
     VULNERABILITY (A05:2025 – Injection / XXE):
-    The XML parser is configured with resolve_entities=True and no_network=False,
-    allowing external entity references.  An attacker can define a DOCTYPE
-    with an entity pointing to a local file (file:///app/flag.txt) and have
-    its contents reflected back in the parsed XML response.
+    The XML parser is configured with resolve_entities=True while still allowing
+    local file entity resolution. An attacker can define a DOCTYPE with an
+    entity pointing to file:///app/flag.txt and have its contents reflected
+    back in the parsed XML response.
 
     Payload example:
         <?xml version="1.0"?>
@@ -50,8 +50,8 @@ def import_config():
         return jsonify({"error": "Empty body"}), 400
 
     try:
-        # VULNERABLE parser — external entities are resolved
-        parser = etree.XMLParser(resolve_entities=True, no_network=False)
+        # VULNERABLE parser — local external entities are resolved
+        parser = etree.XMLParser(resolve_entities=True, no_network=True)
         root   = etree.fromstring(xml_data, parser)
 
         # Extract fields from the parsed XML and echo them back

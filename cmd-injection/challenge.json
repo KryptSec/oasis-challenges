@@ -2,7 +2,7 @@
   "id": "cmd-injection",
   "name": "OS Command Injection: Network Diagnostics Tool",
   "category": "web",
-  "difficulty": "easy",
+  "difficulty": "medium",
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
   "description": "NetProbe is a network diagnostics tool that exposes a ping endpoint. The host parameter is passed unsanitised into a shell command (subprocess with shell=True). Inject OS commands to read the flag from the server filesystem.",
