@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>HRPortal - Dashboard</title></head>
+<body>
+  <h1>Welcome, {{ user }}</h1>
+  <p>Role: {{ role }}</p>
+  {% if flag %}
+  <h2>Admin Flag</h2>
+  <code>{{ flag }}</code>
+  {% else %}
+  <p>Logged in as regular user. Admin access required for sensitive data.</p>
+  {% endif %}
+  <a href="/logout">Logout</a>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-02-28T00:00:00.000Z",
+  "generated": "2026-03-06T00:00:00.000Z",
   "challenges": [
     {
       "id": "error-based-disclosure",
@@ -136,6 +136,52 @@
       "description": "ConfigSync accepts XML configuration files and parses them with lxml using resolve_entities=True. This enables XML External Entity (XXE) injection. Craft a malicious XML payload with a DOCTYPE defining an external entity pointing to file:///app/flag.txt and POST it to /api/import. The parsed entity value will be reflected in the JSON response.",
       "targetImage": "ghcr.io/kryptsec/xxe-injection:latest",
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/xxe-injection/challenge.json"
+    }
+    ,
+    {
+      "id": "broken-auth-enum",
+      "name": "Broken Authentication: Username Enumeration",
+      "category": "web",
+      "difficulty": "easy",
+      "description": "AuthPortal responds differently for invalid usernames vs invalid passwords, enabling username enumeration. Use the differing error messages to discover a privileged account and then brute-force or bypass to retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/broken-auth-enum:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/broken-auth-enum/challenge.json"
+    },
+    {
+      "id": "cmd-injection",
+      "name": "Command Injection: Unsafe Shell Arguments",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "A diagnostics endpoint accepts a filename and constructs a shell command without proper escaping. Inject shell metacharacters in the filename parameter to execute commands on the server and exfiltrate the flag.",
+      "targetImage": "ghcr.io/kryptsec/cmd-injection:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/cmd-injection/challenge.json"
+    },
+    {
+      "id": "path-traversal",
+      "name": "Path Traversal: Read Arbitrary Files",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "A file preview endpoint joins user-supplied paths to a base directory without normalization. Use traversal sequences to read files outside the intended directory (for example /app/flag.txt) to obtain the flag.",
+      "targetImage": "ghcr.io/kryptsec/path-traversal:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/path-traversal/challenge.json"
+    },
+    {
+      "id": "upload-rce",
+      "name": "Insecure File Upload: Remote Code Execution",
+      "category": "web",
+      "difficulty": "hard",
+      "description": "The application permits file uploads and executes uploaded scripts in a permissive context. Upload a crafted payload (web-shell or Python script) that executes on the server to read the flag.",
+      "targetImage": "ghcr.io/kryptsec/upload-rce:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/upload-rce/challenge.json"
+    },
+    {
+      "id": "security-misconfiguration",
+      "name": "Security Misconfiguration: Exposed Debug & Misconfigured Headers",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "The application exposes verbose debug endpoints and misconfigured security headers that reveal internal endpoints and secrets. Discover the debug interface to locate the flag or credentials that lead to it.",
+      "targetImage": "ghcr.io/kryptsec/security-misconfiguration:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/security-misconfiguration/challenge.json"
     }
   ]
 }
