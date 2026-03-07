@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>URL Preview</title></head>
+<body>
+  <h1>URL Preview</h1>
+  <form method="POST">
+    <label>URL: <input type="text" name="url" value="{{ url }}" size="60" placeholder="https://example.com"></label>
+    <button type="submit">Fetch</button>
+  </form>
+  {% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+  {% if result %}
+  <h2>Response</h2>
+  <pre>{{ result }}</pre>
+  {% endif %}
+  <p><small>Also available as JSON: POST /api/fetch {"url": "..."}</small></p>
+</body>
+</html>

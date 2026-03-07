@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>DataFlow - Upload Script</title></head>
+<body>
+  <h1>Upload Script</h1>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Select .py file: <input type="file" name="file"></label><br><br>
+    <button type="submit">Upload</button>
+  </form>
+  {% if result %}<p style="color:green">{{ result }}</p>{% endif %}
+  {% if error  %}<p style="color:red">{{ error }}</p>{% endif %}
+  <p><a href="/">Back</a> | <a href="/scripts">View Scripts</a></p>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>DocuVault - Document Portal</title></head>
+<body>
+  <h1>DocuVault</h1>
+  <p>Secure document management for your organisation.</p>
+  <h2>Available Documents</h2>
+  <ul>
+    {% for doc in docs %}
+    <li><a href="/view?file={{ doc }}">{{ doc }}</a></li>
+    {% endfor %}
+  </ul>
+  <!-- API endpoint also available: GET /api/file?file=<filename> -->
+</body>
+</html>

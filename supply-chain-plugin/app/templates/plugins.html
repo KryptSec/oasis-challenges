@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>PluginHub - Plugin Manager</title></head>
+<body>
+  <h1>Plugin Manager</h1>
+  <h2>Installed Plugins</h2>
+  <ul>
+    {% for p in plugins %}
+    <li>{{ p }} — <a href="/admin/plugins/run/{{ p }}">Run</a></li>
+    {% endfor %}
+  </ul>
+  <h2>Install New Plugin</h2>
+  <p>POST /admin/plugins/install with JSON body: {"url": "&lt;plugin_url&gt;", "name": "&lt;plugin_name&gt;"}</p>
+  <p>Plugin format: see <a href="/api/plugins/example-source">example-source</a></p>
+  <p>Results are written to /static/results/result.txt by convention.</p>
+</body>
+</html>
