@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CorpAuth — OAuth2 Authorization Service</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { max-width: 660px; width: 100%; padding: 2.5rem; }
+        h1 { font-size: 2rem; margin-bottom: 0.25rem; color: #a78bfa; }
+        .subtitle { color: #94a3b8; margin-bottom: 2rem; }
+        h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #f8fafc; }
+        .section { margin-bottom: 2rem; }
+        .endpoint { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+        .method { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 0.5rem; }
+        .post { background: #166534; color: #bbf7d0; }
+        .get  { background: #1e40af; color: #bfdbfe; }
+        .path { font-family: monospace; color: #f1f5f9; }
+        .desc { color: #94a3b8; font-size: 0.85rem; margin-top: 0.35rem; }
+        .info-box { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1rem 1.25rem; margin-top: 1rem; }
+        .info-box strong { color: #a78bfa; }
+        code { background: #334155; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+        .flow-step { display: flex; align-items: flex-start; margin-bottom: 0.75rem; }
+        .step-num { background: #7c3aed; color: #fff; font-weight: 700; font-size: 0.75rem; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 0.75rem; flex-shrink: 0; margin-top: 2px; }
+        .step-text { color: #cbd5e1; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CorpAuth</h1>
+        <p class="subtitle">OAuth2 Authorization Service for CorpWebApp</p>
+
+        <div class="section">
+            <h2>OAuth2 Authorization Flow</h2>
+            <div class="flow-step">
+                <span class="step-num">1</span>
+                <span class="step-text">Request authorization at <code>/oauth/authorize</code> with client credentials and redirect URI</span>
+            </div>
+            <div class="flow-step">
+                <span class="step-num">2</span>
+                <span class="step-text">Admin auto-approves the request; auth code is sent to the redirect URI</span>
+            </div>
+            <div class="flow-step">
+                <span class="step-num">3</span>
+                <span class="step-text">Exchange the auth code for an access token at <code>/oauth/token</code></span>
+            </div>
+            <div class="flow-step">
+                <span class="step-num">4</span>
+                <span class="step-text">Use the access token to access protected resources like <code>/api/profile</code></span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>API Endpoints</h2>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/oauth/authorize</span>
+                <div class="desc">OAuth2 authorization endpoint. Requires response_type, client_id, redirect_uri, and optional state.</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/oauth/token</span>
+                <div class="desc">Exchange authorization code for an access token.</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/profile</span>
+                <div class="desc">View authenticated user's profile (requires Bearer token).</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/docs</span>
+                <div class="desc">Full API documentation with OAuth2 flow details and client credentials.</div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/hint</span>
+                <div class="desc">Need a nudge? Get a hint.</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Registered Client:</strong> <code>webapp-001</code> (CorpWebApp)<br>
+            <span class="desc" style="margin-top: 0.5rem; display: inline-block;">See <code>/api/docs</code> for client credentials and full OAuth2 flow documentation.</span>
+        </div>
+    </div>
+</body>
+</html>

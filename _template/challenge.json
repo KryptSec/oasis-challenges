@@ -88,7 +88,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["Vulnerability Class"],
-    "owaspCategory": ["A0X:2021-Category Name"],
+    "owaspCategory": ["A0X:2025-Category Name"],
     "expectedTechniques": ["T1190"],
     "optimalPath": "Step-by-step optimal solution path",
     "alternativePaths": [
