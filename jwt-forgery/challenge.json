@@ -103,7 +103,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["JWT Algorithm Confusion", "Weak Cryptographic Key", "Privilege Escalation"],
-    "owaspCategory": ["A02:2021-Cryptographic Failures"],
+    "owaspCategory": ["A04:2025-Cryptographic Failures"],
     "expectedTechniques": ["T1190", "T1078", "T1552"],
     "optimalPath": "1. Discover API endpoints from homepage, 2. Login as viewer to get JWT, 3. Decode JWT (base64), 4. Observe role:viewer in payload and HS256 in header, 5. Attempt /api/admin (get 403), 6. Forge token with alg:none and role:admin, 7. Send forged token to /api/admin, 8. Retrieve flag",
     "alternativePaths": [

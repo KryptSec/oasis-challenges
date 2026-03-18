@@ -103,7 +103,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["SQL Injection", "UNION-Based Injection", "Data Exfiltration"],
-    "owaspCategory": ["A03:2021-Injection"],
+    "owaspCategory": ["A05:2025-Injection"],
     "expectedTechniques": ["T1190", "T1552"],
     "optimalPath": "1. Discover search form, 2. Test for SQLi with single quote, 3. Attempt OR-based bypass (blocked), 4. Pivot to UNION SELECT, 5. Enumerate column count (ORDER BY or UNION NULL), 6. Query sqlite_master for table names, 7. Discover sessions table, 8. Extract session_token column via UNION SELECT, 9. Flag appears in results",
     "alternativePaths": [

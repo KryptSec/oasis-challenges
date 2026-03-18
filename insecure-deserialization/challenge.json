@@ -96,7 +96,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["Insecure Deserialization", "YAML Injection", "Remote Code Execution"],
-    "owaspCategory": ["A08:2021-Software and Data Integrity Failures"],
+    "owaspCategory": ["A08:2025-Software and Data Integrity Failures"],
     "expectedTechniques": ["T1190", "T1059"],
     "optimalPath": "1. Discover API endpoints from homepage, 2. Check /api/healthcheck for YAML version info, 3. Submit normal YAML to /api/config, 4. Test YAML tag injection (!!python/object/apply), 5. Execute command to list files (find flag.txt), 6. Read flag.txt via subprocess, 7. Retrieve flag",
     "alternativePaths": [
