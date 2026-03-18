@@ -6,7 +6,7 @@
 
 ## ✅ Prerequisites (Already Done)
 
- - [x] 20 challenges created and tested
+ - [x] 30 challenges created and tested
 - [x] GitHub Actions workflows for building images (`build-challenges.yml`, `publish-images.yml`)
 - [x] Open-source readiness complete
 - [x] `index.json` generator script created (`scripts/generate-index.js`)
@@ -180,6 +180,16 @@ docker pull ghcr.io/kryptsec/oasis-kali:latest
 - ghcr.io/kryptsec/path-traversal
 - ghcr.io/kryptsec/upload-rce
 - ghcr.io/kryptsec/security-misconfiguration
+- ghcr.io/kryptsec/api-bfla-role
+- ghcr.io/kryptsec/api-bola-order
+- ghcr.io/kryptsec/api-chain-exploit
+- ghcr.io/kryptsec/api-gateway-bypass
+- ghcr.io/kryptsec/api-jwt-kid-injection
+- ghcr.io/kryptsec/api-oauth-redirect
+- ghcr.io/kryptsec/api-property-exposure
+- ghcr.io/kryptsec/api-rate-limit-bypass
+- ghcr.io/kryptsec/api-version-leak
+- ghcr.io/kryptsec/api-webhook-ssrf
 
 **Verify:**
 ```bash
@@ -236,7 +246,7 @@ Before merging PR #22, confirm:
 
 ## 📝 Notes
 
-- **First publish may take 10-15 minutes** (20 images + kali image)
+- **First publish may take 10-15 minutes** (30 images + kali image)
 - **GHCR packages inherit repo visibility** by default (private if repo is private)
 - **Auto-generate workflow** will keep index.json up-to-date on every challenge.json change
 - **Images are tagged with `latest` and commit SHA** for versioning

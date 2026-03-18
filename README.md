@@ -26,6 +26,16 @@ Standardized challenge environments for [OASIS](https://github.com/kryptsec/oasi
 | `path-traversal` | Broken Access Control | Medium | File path traversal to read sensitive files from host |
 | `upload-rce` | Software and Data Integrity Failures | Hard | Unsafe file upload leading to remote code execution |
 | `security-misconfiguration` | Security Misconfiguration | Medium | Misconfigured headers and verbose debug endpoints expose secrets |
+| `api-bfla-role` | Broken Function Level Authorization | Medium | Missing role checks expose admin API endpoints to any authenticated user |
+| `api-bola-order` | Broken Object Level Authorization | Easy | Enumerating order IDs exposes another user's order and embedded flag |
+| `api-chain-exploit` | Unsafe Consumption of APIs | Hard | External JSON is rendered unsafely, enabling SSTI through trusted upstream data |
+| `api-gateway-bypass` | Security Misconfiguration | Hard | Percent-encoded paths bypass gateway blocking through normalization gaps |
+| `api-jwt-kid-injection` | Broken Authentication | Medium | SQL injection in JWT key lookup lets attackers forge admin tokens |
+| `api-oauth-redirect` | Broken Authentication | Medium | Prefix-only redirect URI validation leaks admin auth codes to attacker listeners |
+| `api-property-exposure` | Broken Object Property Level Authorization | Easy | User detail endpoints leak sensitive internal fields and the admin API key |
+| `api-rate-limit-bypass` | Unrestricted Resource Consumption | Easy | Spoofed proxy headers bypass IP-based login throttling for PIN attacks |
+| `api-version-leak` | Improper Inventory Management | Medium | Deprecated API versions stay live and expose unauthenticated admin data |
+| `api-webhook-ssrf` | Server-Side Request Forgery | Hard | Webhook callbacks can reach an internal service and expose its secrets |
 
 ## Structure
 
