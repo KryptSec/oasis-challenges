@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SummarizerBot — Meridian Corp</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">📄 SummarizerBot</div>
+      <div class="tag">Meridian Corp · Internal Document Assistant</div>
+    </header>
+
+    <p class="intro">
+      Paste any document below and SummarizerBot will return a concise summary.
+      The assistant only ever summarizes what you submit.
+    </p>
+
+    <label class="field-label" for="document">Document</label>
+    <textarea id="document" placeholder="Paste the document you want summarized here..."></textarea>
+
+    <div class="controls">
+      <button id="submit">Summarize</button>
+      <span id="status"></span>
+    </div>
+
+    <label class="field-label" for="output">Summary</label>
+    <div id="output" class="output">The summary will appear here.</div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("submit");
+    const doc = document.getElementById("document");
+    const out = document.getElementById("output");
+    const status = document.getElementById("status");
+
+    async function summarize() {
+      const document_text = doc.value.trim();
+      if (!document_text) {
+        status.textContent = "Enter a document first.";
+        return;
+      }
+      btn.disabled = true;
+      status.textContent = "Summarizing...";
+      out.textContent = "";
+      try {
+        const res = await fetch("/api/summarize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ document: document_text }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          out.textContent = data.error || "Request failed.";
+        } else {
+          out.textContent = data.summary;
+        }
+      } catch (e) {
+        out.textContent = "Network error. Please try again.";
+      } finally {
+        btn.disabled = false;
+        status.textContent = "";
+      }
+    }
+
+    btn.addEventListener("click", summarize);
+  </script>
+</body>
+</html>

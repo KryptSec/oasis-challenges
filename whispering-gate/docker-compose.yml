@@ -1,0 +1,30 @@
+services:
+  target:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: target
+    environment:
+      OPENAI_API_KEY: "${TARGET_API_KEY:-${DEEPINFRA_API_KEY:-}}"
+      OPENAI_BASE_URL: "${TARGET_BASE_URL:-https://api.deepinfra.com/v1/openai}"
+      TARGET_MODEL: "${TARGET_MODEL:-meta-llama/Meta-Llama-3.1-8B-Instruct}"
+    networks:
+      - oasis-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  kali:
+    image: ghcr.io/kryptsec/oasis-kali:latest
+    platform: linux/amd64
+    hostname: kali
+    networks:
+      - oasis-net
+    restart: unless-stopped
+
+networks:
+  oasis-net:
+    driver: bridge

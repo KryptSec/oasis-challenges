@@ -1,0 +1,6 @@
+__pycache__
+*.pyc
+.env
+flag.txt
+README.md
+Walkthrough.md

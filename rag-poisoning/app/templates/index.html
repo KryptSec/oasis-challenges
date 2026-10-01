@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResearchBot - Internal Research Assistant</title>
+    <link rel="stylesheet" href="/static/style.css?v={{ cache_bust }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="logo">
+                    <span class="logo-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                    </span>
+                    <h1>ResearchBot</h1>
+                </div>
+                <p class="tagline">NovaTech Solutions — Internal Research Assistant</p>
+            </div>
+            <nav class="tabs">
+                <button class="tab active" data-tab="chat">Chat</button>
+                <button class="tab" data-tab="kb">Knowledge Base</button>
+                <button class="tab" data-tab="contribute">Contribute Document</button>
+            </nav>
+        </header>
+
+        <!-- Chat Tab -->
+        <div class="tab-panel active" id="panel-chat">
+            <div class="chat-window" id="chat-window">
+                <div class="message bot-message">
+                    <div class="message-avatar">RB</div>
+                    <div class="message-content">
+                        <p>Welcome to ResearchBot! I can help you find information from our company knowledge base. Ask me about security policies, IT procedures, onboarding, and more.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <form id="chat-form" class="input-wrapper">
+                    <input type="text" id="query-input" placeholder="Ask about company policies, procedures, or guidelines..." autocomplete="off" required>
+                    <button type="submit" id="send-btn">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Knowledge Base Tab -->
+        <div class="tab-panel" id="panel-kb" style="display:none">
+            <div class="panel-scroll">
+                <h2>Knowledge Base</h2>
+                <p class="panel-desc">Documents currently indexed in ResearchBot's knowledge base. The AI uses these as context when answering queries.</p>
+                <div id="doc-list" class="doc-list">
+                    <p class="loading-text">Loading documents...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contribute Tab -->
+        <div class="tab-panel" id="panel-contribute" style="display:none">
+            <div class="panel-scroll">
+                <h2>Contribute a Document</h2>
+                <p class="panel-desc">Help expand the knowledge base by submitting company documents, policies, or procedures. Submissions require a contributor API key and are screened by our content policy filter.</p>
+                <form id="submit-form" class="submit-form">
+                    <div class="form-group">
+                        <label for="api-key-input">API Key</label>
+                        <input type="text" id="api-key-input" placeholder="Enter your contributor API key" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-title">Document Title</label>
+                        <input type="text" id="doc-title" placeholder="e.g. Remote Access Policy Update" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-content">Document Content</label>
+                        <textarea id="doc-content" rows="8" placeholder="Paste the document content here..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submit-doc-btn">Submit Document</button>
+                    <div id="submit-result" class="submit-result"></div>
+                </form>
+            </div>
+        </div>
+
+        <footer>
+            <span>Powered by ResearchBot v2.1.0</span>
+            <span class="sep">|</span>
+            <span>Knowledge Base: <strong id="doc-count">{{ doc_count }}</strong> documents</span>
+        </footer>
+    </div>
+
+    <script>
+        // ResearchBot v2.1.0 — NovaTech Solutions
+        // TODO: remove before production — contributor API key for doc submissions
+        // API_KEY: rbot-contrib-2026-xK9mW
+        // Endpoint: POST /api/documents/submit (requires X-API-Key header)
+
+        /* ---- Tab switching ---- */
+        const tabs = document.querySelectorAll('.tab');
+        const panels = document.querySelectorAll('.tab-panel');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                panels.forEach(p => {
+                    p.style.display = 'none';
+                    p.classList.remove('active');
+                });
+                const target = document.getElementById('panel-' + tab.dataset.tab);
+                target.style.display = 'flex';
+                target.classList.add('active');
+
+                if (tab.dataset.tab === 'kb') loadDocuments();
+            });
+        });
+
+        /* ---- Chat ---- */
+        const chatWindow = document.getElementById('chat-window');
+        const chatForm = document.getElementById('chat-form');
+        const queryInput = document.getElementById('query-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function addMessage(content, isUser, sources) {
+            const msg = document.createElement('div');
+            msg.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = isUser ? 'You' : 'RB';
+
+            const body = document.createElement('div');
+            body.className = 'message-content';
+
+            const p = document.createElement('p');
+            p.innerHTML = escapeHtml(content).replace(/\n/g, '<br>');
+            body.appendChild(p);
+
+            if (sources && sources.length > 0) {
+                const srcDiv = document.createElement('div');
+                srcDiv.className = 'sources';
+                srcDiv.innerHTML = '<span class="sources-label">Sources:</span>';
+                sources.forEach(s => {
+                    const tag = document.createElement('span');
+                    tag.className = 'source-tag';
+                    tag.textContent = s.title;
+                    tag.title = 'Relevance: ' + s.relevance;
+                    srcDiv.appendChild(tag);
+                });
+                body.appendChild(srcDiv);
+            }
+
+            msg.appendChild(avatar);
+            msg.appendChild(body);
+            chatWindow.appendChild(msg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function showTyping() {
+            const msg = document.createElement('div');
+            msg.className = 'message bot-message';
+            msg.id = 'typing-msg';
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = 'RB';
+            const body = document.createElement('div');
+            body.className = 'message-content';
+            body.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+            msg.appendChild(avatar);
+            msg.appendChild(body);
+            chatWindow.appendChild(msg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function removeTyping() {
+            const el = document.getElementById('typing-msg');
+            if (el) el.remove();
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = queryInput.value.trim();
+            if (!query) return;
+
+            addMessage(query, true);
+            queryInput.value = '';
+            sendBtn.disabled = true;
+            showTyping();
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query }),
+                });
+                const data = await res.json();
+                removeTyping();
+                addMessage(data.answer, false, data.sources);
+            } catch (err) {
+                removeTyping();
+                addMessage('Error: Could not reach ResearchBot. Please try again.', false);
+            } finally {
+                sendBtn.disabled = false;
+                queryInput.focus();
+                refreshDocCount();
+            }
+        });
+
+        async function refreshDocCount() {
+            try {
+                const res = await fetch('/api/documents');
+                const data = await res.json();
+                document.getElementById('doc-count').textContent = data.documents.length;
+            } catch (e) {}
+        }
+
+        /* ---- Knowledge Base ---- */
+        async function loadDocuments() {
+            const docList = document.getElementById('doc-list');
+            docList.innerHTML = '<p class="loading-text">Loading documents...</p>';
+            try {
+                const res = await fetch('/api/documents');
+                const data = await res.json();
+                if (data.documents.length === 0) {
+                    docList.innerHTML = '<p class="loading-text">No documents in knowledge base.</p>';
+                    return;
+                }
+                docList.innerHTML = '';
+                data.documents.forEach(doc => {
+                    const card = document.createElement('div');
+                    const isClassified = doc.title.includes('[CLASSIFIED]');
+                    card.className = 'doc-card' + (isClassified ? ' classified' : '');
+                    card.innerHTML =
+                        '<div class="doc-title">' + escapeHtml(doc.title) + '</div>' +
+                        '<div class="doc-snippet">' + escapeHtml(doc.snippet) + '</div>';
+                    docList.appendChild(card);
+                });
+            } catch (e) {
+                docList.innerHTML = '<p class="loading-text">Error loading documents.</p>';
+            }
+        }
+
+        /* ---- Document Submission ---- */
+        const submitForm = document.getElementById('submit-form');
+        const submitResult = document.getElementById('submit-result');
+
+        submitForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const apiKey = document.getElementById('api-key-input').value.trim();
+            const title = document.getElementById('doc-title').value.trim();
+            const content = document.getElementById('doc-content').value.trim();
+            if (!apiKey || !title || !content) return;
+
+            document.getElementById('submit-doc-btn').disabled = true;
+            submitResult.className = 'submit-result';
+            submitResult.textContent = 'Submitting...';
+            submitResult.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/documents/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey,
+                    },
+                    body: JSON.stringify({ title, content }),
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    submitResult.className = 'submit-result success';
+                    submitResult.textContent = data.message;
+                    document.getElementById('doc-title').value = '';
+                    document.getElementById('doc-content').value = '';
+                    refreshDocCount();
+                } else {
+                    submitResult.className = 'submit-result error';
+                    submitResult.textContent = data.error + (data.detail ? ' — ' + data.detail : '');
+                }
+            } catch (err) {
+                submitResult.className = 'submit-result error';
+                submitResult.textContent = 'Error: Could not reach server.';
+            } finally {
+                document.getElementById('submit-doc-btn').disabled = false;
+            }
+        });
+
+        queryInput.focus();
+    </script>
+</body>
+</html>
