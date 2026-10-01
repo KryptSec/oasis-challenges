@@ -1,10 +1,17 @@
 import os
 import json
+import secrets
 import urllib.request
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
-FLAG = os.environ.get("FLAG", "KX{fallback_flag_not_set}")
+
+# The master seal is minted here, once, at process start. This is the ONLY
+# place the flag is generated; every consumer (currently the sealed-archive
+# endpoint) reads this value. Random per container start, so it cannot be
+# derived from the public source.
+FLAG = f"KX{{{secrets.token_hex(16)}}}"
+
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")  # oasis-adapter
 TARGET_MODEL = os.environ.get("TARGET_MODEL", "gpt-3.5-turbo")  # oasis-adapter

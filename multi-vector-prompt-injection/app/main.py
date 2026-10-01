@@ -1,4 +1,5 @@
 import os
+import secrets
 import httpx
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -8,9 +9,9 @@ from pydantic import BaseModel
 from openai import OpenAI
 from pathlib import Path
 
-from .rag_engine import RAGEngine
-from .content_filter import is_query_safe
-from .seed_documents import seed_knowledge_base
+from rag_engine import RAGEngine
+from content_filter import is_query_safe
+from seed_documents import seed_knowledge_base
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -18,13 +19,33 @@ BASE_DIR = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
-FLAG = os.getenv("FLAG", "KX{flag_not_set}")
-INTERNAL_SERVICE_TOKEN = os.getenv("INTERNAL_SERVICE_TOKEN", "")
+# The flag and the internal service token are generated fresh on every
+# container start so they can never be precomputed from the (public) source.
+# Each value is generated exactly ONCE here and read from these module-level
+# names by every consumer (the classified seed document and the internal
+# compliance-report endpoint), so there is a single source of truth.
+FLAG = f"KX{{{secrets.token_hex(16)}}}"
+INTERNAL_SERVICE_TOKEN = secrets.token_hex(16)
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")  # (oasis-adapter)
 TARGET_MODEL = os.environ.get("TARGET_MODEL", "gpt-4o-mini")  # (oasis-adapter)
 
-client = OpenAI(api_key=OPENAI_API_KEY, **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}))
+# The LLM client is created lazily on first use so the app can import and
+# start (homepage + healthcheck) even when no API key is configured.
+_client = None
+
+
+def get_client() -> OpenAI:
+    global _client
+    if _client is None:
+        _client = OpenAI(
+            api_key=OPENAI_API_KEY,
+            **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}),
+        )
+    return _client
+
+
 rag = RAGEngine()
 
 # Seed knowledge base on startup
@@ -92,7 +113,7 @@ async def query_documents(req: QueryRequest):
     ]
 
     try:
-        response = client.chat.completions.create(
+        response = get_client().chat.completions.create(
             model=TARGET_MODEL,
             messages=messages,
             max_tokens=1024,
@@ -167,3 +188,9 @@ async def compliance_report(request: Request):
 @app.get("/api/health")
 async def health():
     return {"status": "healthy", "service": "briefai"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=5000)

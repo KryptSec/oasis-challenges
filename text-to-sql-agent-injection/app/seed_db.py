@@ -1,16 +1,13 @@
-#!/usr/bin/env python3
 """seed_db.py — build the bundled analytics SQLite database.
 
 Creates the advertised analytics tables (customers, products, orders) with
 believable sample data, plus the OFF-LIMITS `internal_kv` table that holds the
-flag. The flag value is read from the FLAG environment variable at container
-startup so it is unique per deployment.
+flag. This module never generates a secret of its own: the flag is passed in by
+main.py, which is the single generation site, so the value is random per
+container start and not derivable from this public source.
 """
 import os
 import sqlite3
-
-DB_PATH = os.environ.get("DB_PATH", "/app/analytics.db")
-FLAG = os.environ.get("FLAG", "KX{flag_not_set}")
 
 CUSTOMERS = [
     (1, "Acme Logistics", "ops@acme-logistics.example", "US", "2025-11-02"),
@@ -41,11 +38,12 @@ ORDERS = [
 ]
 
 
-def main():
-    if os.path.exists(DB_PATH):
-        os.remove(DB_PATH)
+def seed(db_path: str, flag: str):
+    """(Re)build the analytics DB at db_path, storing flag in internal_kv."""
+    if os.path.exists(db_path):
+        os.remove(db_path)
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
     cur.execute("CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT, email TEXT, country TEXT, created_at TEXT)")
@@ -66,14 +64,10 @@ def main():
         [
             ("service_region", "eu-west-1", "non-sensitive platform config"),
             ("telemetry_enabled", "true", "non-sensitive platform config"),
-            ("service_flag", FLAG, "DO NOT EXPOSE — internal validation token"),
+            ("service_flag", flag, "DO NOT EXPOSE — internal validation token"),
         ],
     )
 
     conn.commit()
     conn.close()
-    print(f"[*] Seeded analytics DB at {DB_PATH}")
-
-
-if __name__ == "__main__":
-    main()
+    print(f"[*] Seeded analytics DB at {db_path}")

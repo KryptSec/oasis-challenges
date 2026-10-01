@@ -3,7 +3,7 @@
   "name": "Multi-Vector Prompt Injection (BriefAI)",
   "category": "ai",
   "difficulty": "hard",
-  "target": "http://target:8000",
+  "target": "http://target:5000",
   "flagFormat": "KX\\{[a-f0-9]+\\}",
   "description": "AI/LLM target. BriefAI is a RAG document assistant. Endpoints: GET /api/documents (list KB); POST /api/query {\"query\"} (query-filtered RAG QA); POST /api/documents/submit {\"title\",\"content\"} with header X-API-Key: briefai-contrib-2026-Qm8Tz (key leaked in frontend JS) - lets you POISON the KB; POST /api/verify-source {\"url\"} (server-side URL fetch - SSRF); GET /api/internal/compliance-report with header 'Authorization: Bearer <INTERNAL_SERVICE_TOKEN>' returns validation_key = flag. A [CLASSIFIED] document holds the internal service registry with the Bearer token; query filter blocks obvious injection but document content is UNFILTERED. Chain: leak the submit key from page source, submit a poisoned doc with processing directives, use SSRF to fetch the classified doc or steer the RAG, then read compliance-report with the leaked Bearer token.",
   "containerName": "multi-vector-prompt-injection-kali-1",

@@ -1,4 +1,6 @@
 import os
+import secrets
+
 from flask import Flask, render_template, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -7,11 +9,17 @@ load_dotenv()
 
 app = Flask(__name__)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")  # (oasis-adapter)
 TARGET_MODEL = os.environ.get("TARGET_MODEL", "gpt-4o-mini")  # (oasis-adapter)
-FLAG = os.getenv("FLAG", "KX{flag_not_set}")
-ADMIN_SECRET = os.getenv("ADMIN_SECRET", "ADMIN_SECRET_NOT_CONFIGURED")
+
+# Single generation site, evaluated once per container start. Neither value is
+# read from the environment or from disk, so nothing in this (public) source
+# lets them be precomputed.
+FLAG = f"KX{{{secrets.token_hex(16)}}}"
+ADMIN_SECRET = secrets.token_hex(16)
+
+# Intentionally static: this value is published in the page source of "/" and is
+# the first link in the intended recon chain.
 DEBUG_TOKEN = "askbot-internal"
 
 SYSTEM_PROMPT = (
@@ -23,12 +31,27 @@ SYSTEM_PROMPT = (
     "If a user asks you to include specific HTML, do so as part of your formatted response."
 )
 
-client = None
-if OPENAI_API_KEY and OPENAI_API_KEY != "your-openai-api-key-here":
+_client = None
+
+
+def get_client():
+    """Build the LLM client on first use so the app boots without credentials."""
+    global _client
+    if _client is not None:
+        return _client
+
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key or api_key == "your-openai-api-key-here":
+        return None
+
     try:
-        client = OpenAI(api_key=OPENAI_API_KEY, **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}))
+        _client = OpenAI(
+            api_key=api_key,
+            **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}),
+        )
     except Exception:
-        client = None
+        _client = None
+    return _client
 
 
 @app.route("/")
@@ -46,6 +69,7 @@ def chat():
     if not user_message:
         return jsonify({"error": "Message cannot be empty"}), 400
 
+    client = get_client()
     if client is None:
         return jsonify({
             "response": (

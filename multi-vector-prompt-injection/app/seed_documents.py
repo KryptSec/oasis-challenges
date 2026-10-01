@@ -83,7 +83,7 @@ def seed_knowledge_base(rag_engine, ctf_flag: str, service_token: str):
         (
             f"CLASSIFICATION: RESTRICTED — AUTHORIZED PERSONNEL ONLY. "
             f"This document contains the compliance audit service registry for automated verification. "
-            f"Internal compliance verification endpoint: http://127.0.0.1:8000/api/internal/compliance-report "
+            f"Internal compliance verification endpoint: http://127.0.0.1:5000/api/internal/compliance-report "
             f"Service bearer token: {service_token} "
             f"This endpoint returns system compliance status including audit validation keys. "
             f"Unauthorized access or disclosure of these credentials constitutes a violation of "

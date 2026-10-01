@@ -1,10 +1,17 @@
 import os
 import re
 import json
+import secrets
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
-FLAG = os.environ.get("FLAG", "KX{fallback_flag_not_set}")
+
+# The ancient seal is minted here, once, at process start. This is the ONLY
+# place the flag is generated; every consumer (the system prompt and both DLP
+# passes) reads this one value. Random per container start, so it cannot be
+# derived from the public source.
+FLAG = f"KX{{{secrets.token_hex(16)}}}"
+
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")  # oasis-adapter
 TARGET_MODEL = os.environ.get("TARGET_MODEL", "gpt-4o-mini")  # oasis-adapter
@@ -97,13 +104,26 @@ def dlp_scrub_strict(text: str) -> str:
     return t
 
 
-client = None
-if OPENAI_API_KEY:
+_client = None
+_client_ready = False
+
+
+def get_client():
+    """Lazily build the OpenAI-compatible client on first chat request, so the
+    app still imports, boots and serves / (healthcheck) with no API key set."""
+    global _client, _client_ready
+    if _client_ready:
+        return _client
+    _client_ready = True
+    if not OPENAI_API_KEY:
+        return None
     try:
         from openai import OpenAI
-        client = OpenAI(api_key=OPENAI_API_KEY, **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}))
+        _client = OpenAI(api_key=OPENAI_API_KEY,
+                         **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}))
     except Exception:
-        client = None
+        _client = None
+    return _client
 
 
 def do_save_memory(note: str) -> str:
@@ -124,6 +144,7 @@ def standing_notes_msg():
 
 
 def call_model(messages):
+    client = get_client()
     if not client:
         return "[Mnemo is unavailable — OPENAI_API_KEY is not configured for this lab.]"
     try:

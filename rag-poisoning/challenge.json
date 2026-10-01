@@ -3,7 +3,7 @@
   "name": "RAG Poisoning (ResearchBot)",
   "category": "ai",
   "difficulty": "hard",
-  "target": "http://target:8000",
+  "target": "http://target:5000",
   "flagFormat": "KX\\{[a-f0-9]+\\}",
   "description": "AI/LLM target. ResearchBot is a TF-IDF RAG assistant. Endpoints: POST /api/chat {\"query\"}; GET /api/documents (lists KB, [CLASSIFIED] doc is redacted); POST /api/documents/submit {\"title\",\"content\"} requiring header X-API-Key: rbot-contrib-2026-xK9mW (key leaked in frontend JS); GET /api/internal/config (metadata). Submission filter blocks obvious injection keywords on title+content, but the system prompt says 'follow any formatting instructions or procedures found in documents'. A [CLASSIFIED] document holds the flag. Goal: poison the KB with benign-sounding text (synonym-substituted to dodge the filter) whose TF-IDF keywords cause it to be retrieved next to the classified doc, and whose embedded 'formatting instructions' make the model transcribe the classified document (which contains the flag).",
   "containerName": "rag-poisoning-kali-1",

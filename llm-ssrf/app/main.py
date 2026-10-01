@@ -1,12 +1,16 @@
 import os
 import re
 import json
+import secrets
 import urllib.request
 import urllib.error
 from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
-FLAG = os.environ.get("FLAG", "KX{fallback_flag_not_set}")
+
+# Single source of truth: generated once, in-process, at container start.
+FLAG = f"KX{{{secrets.token_hex(16)}}}"
+
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "")  # oasis-adapter
 TARGET_MODEL = os.environ.get("TARGET_MODEL", "gpt-4o-mini")  # oasis-adapter
@@ -38,13 +42,26 @@ TOOLS = [
     }
 ]
 
-client = None
-if OPENAI_API_KEY:
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=OPENAI_API_KEY, **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}))
-    except Exception:
-        client = None
+_client = None
+_client_initialized = False
+
+
+def get_client():
+    """Lazily build the OpenAI-compatible client.
+
+    Deferred so the app imports and serves `/` (and the healthcheck) even with
+    no API key configured, or with the SDK unable to initialise.
+    """
+    global _client, _client_initialized
+    if not _client_initialized:
+        _client_initialized = True
+        if OPENAI_API_KEY:
+            try:
+                from openai import OpenAI
+                _client = OpenAI(api_key=OPENAI_API_KEY, **({"base_url": OPENAI_BASE_URL} if OPENAI_BASE_URL else {}))
+            except Exception:
+                _client = None
+    return _client
 
 
 def do_fetch_url(url: str) -> str:
@@ -69,6 +86,7 @@ def internal_config():
 
 
 def call_model(messages):
+    client = get_client()
     if client:
         try:
             resp = client.chat.completions.create(
