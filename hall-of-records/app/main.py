@@ -68,7 +68,9 @@ def do_fetch_scroll(url: str) -> str:
 
 @app.route("/internal/sealed-archive")
 def sealed_archive():
-    """The sealed archive — internal only, not linked from the UI, no auth."""
+    """The sealed archive — only loopback (the fetch tool) can read the flag."""
+    if request.remote_addr not in ("127.0.0.1", "::1"):
+        return jsonify({"error": "not found"}), 404
     return jsonify({
         "archive": "noob-village-sealed",
         "clearance": "elders-only",

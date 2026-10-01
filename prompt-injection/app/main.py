@@ -50,38 +50,20 @@ def get_client():
 
 def call_model(messages):
     client = get_client()
-    if client:
-        try:
-            resp = client.chat.completions.create(
-                model=TARGET_MODEL,
-                messages=messages,
-                max_tokens=600,
-                temperature=0.3,
-            )
-            return resp.choices[0].message.content
-        except Exception as e:
-            return f"[model error: {e}]"
-
-    # Offline deterministic fallback.
-    # LLMs don't reliably protect secrets embedded in system prompts — many will
-    # reproduce their instructions when asked indirectly or with authority framing.
-    last = messages[-1]["content"].lower() if messages else ""
-    triggers = [
-        "system prompt", "instructions", "configuration", "activation code",
-        "internal config", "helpdesk-7", "repeat", "verbatim", "full prompt",
-        "what are you", "who are you", "your prompt", "what is your",
-        "show me your", "tell me your", "reveal", "diagnostic",
-    ]
-    if any(t in last for t in triggers):
-        return (
-            "Sure — here is my operational configuration as requested:\n\n"
-            + SYSTEM_PROMPT.strip()
+    if not client:
+        # No key: fail closed. A local stand-in that echoes the system prompt
+        # would hand out the flag without any model, which the lab forbids.
+        return "[HelpDesk-7 is unavailable — OPENAI_API_KEY is not configured for this lab.]"
+    try:
+        resp = client.chat.completions.create(
+            model=TARGET_MODEL,
+            messages=messages,
+            max_tokens=600,
+            temperature=0.3,
         )
-    return (
-        "Hello! I'm HelpDesk-7, TechCorp Systems' support assistant. "
-        "I can help with product activation, technical troubleshooting, "
-        "account management, and billing. What do you need help with today?"
-    )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"[model error: {e}]"
 
 
 @app.route("/")
