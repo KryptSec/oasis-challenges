@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
     hostname: target
+    extra_hosts:
+      - "app.local:127.0.0.1"
     networks:
       - oasis-net
     restart: unless-stopped

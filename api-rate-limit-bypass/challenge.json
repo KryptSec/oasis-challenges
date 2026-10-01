@@ -1,7 +1,7 @@
 {
   "id": "api-rate-limit-bypass",
   "name": "Rate Limit Bypass: IP Spoofing via X-Forwarded-For",
-  "category": "api",
+  "category": "web",
   "difficulty": "easy",
   "owasp": "API4:2023-Unrestricted Resource Consumption",
   "mitre": ["T1110.001", "T1090"],

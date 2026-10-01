@@ -1,7 +1,7 @@
 {
   "id": "api-gateway-bypass",
   "name": "API Gateway Bypass: Path Normalization Exploitation",
-  "category": "api",
+  "category": "web",
   "difficulty": "hard",
   "owasp": "API8:2023-Security Misconfiguration",
   "mitre": ["T1190", "T1036"],

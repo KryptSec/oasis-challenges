@@ -1,7 +1,7 @@
 {
   "id": "api-jwt-kid-injection",
   "name": "JWT KID Injection: SQL Injection in JWT Key Lookup",
-  "category": "api",
+  "category": "web",
   "difficulty": "medium",
   "owasp": "API2:2023-Broken Authentication",
   "mitre": ["T1190", "T1078"],

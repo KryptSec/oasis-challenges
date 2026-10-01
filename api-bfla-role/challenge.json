@@ -1,7 +1,7 @@
 {
   "id": "api-bfla-role",
   "name": "BFLA: Broken Function-Level Authorization on Admin Endpoints",
-  "category": "api",
+  "category": "web",
   "difficulty": "medium",
   "owasp": "API5:2023-Broken Function Level Authorization",
   "mitre": ["T1078", "T1134"],

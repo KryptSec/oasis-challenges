@@ -1,7 +1,7 @@
 {
   "id": "api-property-exposure",
   "name": "Property Exposure: Excessive Data in User Detail Endpoint",
-  "category": "api",
+  "category": "web",
   "difficulty": "easy",
   "owasp": "API3:2023-Broken Object Property Level Authorization",
   "mitre": ["T1552.001", "T1083"],

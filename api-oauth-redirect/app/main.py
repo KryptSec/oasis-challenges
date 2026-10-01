@@ -1,5 +1,5 @@
-from urllib.error import HTTPError, URLError
-from urllib.request import urlopen
+import http.client
+from urllib.parse import urlsplit
 
 from flask import Flask, render_template, request, jsonify
 import os, uuid, secrets, time
@@ -31,7 +31,7 @@ def init_lab():
     # --- OAuth2 Client --------------------------------------------------------
     CLIENTS["webapp-001"] = {
         "name": "CorpWebApp",
-        "redirect_uri": "http://app.local/callback",
+        "redirect_uri": "http://app.local",
         "secret": "webapp-secret-2025",
     }
 
@@ -109,8 +109,8 @@ def oauth_authorize():
 
     VULNERABILITY: redirect_uri is validated using startswith() which is a
     prefix-only check. An attacker can craft a URI like:
-        http://app.local/callback@evil.com/steal
-    which passes the startswith("http://app.local/callback") check but the
+        http://app.local@evil.com/steal
+    which passes the startswith("http://app.local") check but the
     HTTP client delivering the authorization code treats "app.local" as a
     userinfo component and actually connects to evil.com.
     """
@@ -153,19 +153,28 @@ def oauth_authorize():
     }
 
     # --- Deliver the code to redirect_uri ------------------------------------
+    # A standards-compliant HTTP client connects to the host in the URL
+    # authority, treating anything before an "@" as userinfo. Because the
+    # redirect_uri passed only a prefix check, an attacker can keep the
+    # registered value as userinfo (http://app.local@attacker/...) and have
+    # the authorization code delivered to a host they control.
     delivery_url = build_delivery_url(redirect_uri, code, state)
+    target = urlsplit(delivery_url)
+    request_path = target.path or "/"
+    if target.query:
+        request_path += "?" + target.query
     try:
-        with urlopen(delivery_url, timeout=5) as response:
-            delivery_status = getattr(response, "status", 200)
-    except HTTPError as exc:
-        delivery_status = exc.code
-    except URLError as exc:
+        conn = http.client.HTTPConnection(target.hostname, target.port or 80, timeout=5)
+        conn.request("GET", request_path)
+        delivery_status = conn.getresponse().status
+        conn.close()
+    except OSError as exc:
         del AUTH_CODES[code]
         return jsonify({
             "error": "redirect_delivery_failed",
             "error_description": (
                 "Failed to deliver the authorization code to the supplied redirect_uri: "
-                f"{exc.reason}"
+                f"{exc}"
             ),
         }), 502
 
@@ -304,7 +313,7 @@ def api_docs():
         "registered_clients": {
             "webapp-001": {
                 "name": "CorpWebApp",
-                "registered_redirect_uri": "http://app.local/callback",
+                "registered_redirect_uri": "http://app.local",
             },
         },
     })
@@ -318,7 +327,7 @@ def api_hint():
             "But how strict is that validation?",
             "What happens if the redirect_uri starts with the registered callback URL "
             "but has extra characters appended?",
-            "Think about URL parsing: http://app.local/callback@evil.com — "
+            "Think about URL parsing: http://app.local@evil.com — "
             "where does this actually connect to?",
             "The admin auto-approves authorization requests. If you can redirect "
             "the auth code to a server you control, you can steal it.",

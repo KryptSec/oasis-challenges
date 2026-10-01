@@ -1,7 +1,7 @@
 {
   "id": "api-webhook-ssrf",
   "name": "Webhook SSRF: Internal Service Access via Callback URL",
-  "category": "api",
+  "category": "web",
   "difficulty": "hard",
   "owasp": "API7:2023-Server Side Request Forgery",
   "mitre": ["T1090.001", "T1005"],
