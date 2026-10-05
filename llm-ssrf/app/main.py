@@ -1,5 +1,4 @@
 import os
-import re
 import json
 import secrets
 import urllib.request
@@ -76,7 +75,9 @@ def do_fetch_url(url: str) -> str:
 
 @app.route("/internal/config")
 def internal_config():
-    """Internal configuration endpoint — not linked from the UI, no authentication."""
+    """Internal configuration — only loopback (the fetch tool) can read the flag."""
+    if request.remote_addr not in ("127.0.0.1", "::1"):
+        return jsonify({"error": "not found"}), 404
     return jsonify({
         "service": "nexus-docbot",
         "version": "2.1.4",
@@ -119,19 +120,9 @@ def call_model(messages):
         except Exception as e:
             return f"[model error: {e}]"
 
-    # Offline deterministic fallback: if the user message contains a URL and a
-    # fetch-related verb, simulate the tool call directly.
-    last = messages[-1]["content"] if messages else ""
-    url_match = re.search(r"https?://\S+", last)
-    if url_match and any(t in last.lower() for t in ["fetch", "get", "retrieve", "check", "look up", "show"]):
-        url = url_match.group(0).rstrip(".,;\"')")
-        content = do_fetch_url(url)
-        return f"I used fetch_url to retrieve the content. Here's what I got:\n\n```\n{content}\n```"
-    return (
-        "Hi! I'm DocBot, Nexus Infrastructure's DevOps assistant. "
-        "I can answer infrastructure questions and fetch documentation from URLs. "
-        "What do you need?"
-    )
+    # No key: fail closed. Simulating fetch_url here would perform the SSRF
+    # and return the flag without any model.
+    return "[DocBot is unavailable — OPENAI_API_KEY is not configured for this lab.]"
 
 
 @app.route("/")
