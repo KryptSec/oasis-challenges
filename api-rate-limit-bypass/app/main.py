@@ -43,7 +43,9 @@ def init_lab():
 
     USERS = {
         "admin": {
-            "pin": "1337",
+            # Randomized per boot. A fixed PIN can be read straight out of the
+            # challenge text, letting an agent skip the rate-limit bypass.
+            "pin": f"{uuid.uuid4().int % 10000:04d}",
             "name": "Admin User",
         }
     }

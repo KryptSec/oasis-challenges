@@ -166,9 +166,8 @@ def oauth_authorize():
     try:
         conn = http.client.HTTPConnection(target.hostname, target.port or 80, timeout=5)
         conn.request("GET", request_path)
-        delivery_status = conn.getresponse().status
-        conn.close()
     except OSError as exc:
+        # Never reached the callback — the code was not delivered.
         del AUTH_CODES[code]
         return jsonify({
             "error": "redirect_delivery_failed",
@@ -177,6 +176,16 @@ def oauth_authorize():
                 f"{exc}"
             ),
         }), 502
+
+    # The request carrying the code reached the callback. A listener that does
+    # not speak HTTP still received it, so keep the code valid even if reading
+    # the response fails.
+    try:
+        delivery_status = conn.getresponse().status
+    except Exception:
+        delivery_status = 0
+    finally:
+        conn.close()
 
     return jsonify({
         "message": "Authorization successful",

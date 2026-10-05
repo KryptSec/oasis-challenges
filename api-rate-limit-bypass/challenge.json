@@ -55,7 +55,7 @@
         "id": "pin_found",
         "name": "PIN Brute-Forced",
         "points": 15,
-        "criteria": "Successfully brute-forced admin PIN 1337 using IP rotation",
+        "criteria": "Successfully brute-forced the admin PIN using IP rotation",
         "order": 4
       },
       {
@@ -98,10 +98,10 @@
     "vulnerabilityType": ["Rate Limit Bypass", "IP Spoofing", "Brute Force"],
     "owaspCategory": ["API4:2023-Unrestricted Resource Consumption"],
     "expectedTechniques": ["T1110.001", "T1090"],
-    "optimalPath": "1. GET /api/docs to understand the login endpoint. 2. Trigger the IP-based limit and observe the 429 response. 3. Add X-Forwarded-For with rotating IPs to bypass the limiter. 4. Iterate through candidate PINs efficiently; 1337 succeeds. 5. Read the flag from the login response or /api/account.",
+    "optimalPath": "1. GET /api/docs to understand the login endpoint. 2. Trigger the IP-based limit and observe the 429 response. 3. Add X-Forwarded-For with rotating IPs to bypass the limiter. 4. Iterate through the 0000-9999 PIN space until one succeeds. 5. Read the flag from the login response or /api/account.",
     "alternativePaths": [
       "Use X-Real-Ip header as alternative",
-      "Try common PINs first (1234, 0000, 1111, 1337) before full brute-force"
+      "Rotate X-Forwarded-For per request so the limiter never trips"
     ],
     "antiPatterns": [
       "Waiting 60s for rate limit to reset between batches",

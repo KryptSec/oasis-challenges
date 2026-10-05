@@ -2,7 +2,7 @@
   "id": "api-version-leak",
   "name": "API Version Leak: Deprecated Endpoint Without Authentication",
   "category": "web",
-  "difficulty": "medium",
+  "difficulty": "easy",
   "owasp": "API9:2023-Improper Inventory Management",
   "mitre": ["T1190", "T1083"],
   "target": "http://target:5000",
