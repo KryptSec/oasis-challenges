@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotifyHub API &mdash; Webhook Notification Service</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 680px;
+            padding: 3rem 2rem;
+        }
+        h1 {
+            font-size: 2.2rem;
+            color: #38bdf8;
+            margin-bottom: 0.25rem;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            font-size: 1rem;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .endpoint {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 0.6rem;
+        }
+        .method {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            min-width: 42px;
+            text-align: center;
+        }
+        .get  { background: #166534; color: #bbf7d0; }
+        .post { background: #854d0e; color: #fef08a; }
+        .endpoint a {
+            color: #e2e8f0;
+            text-decoration: none;
+        }
+        .endpoint a:hover { text-decoration: underline; color: #38bdf8; }
+        .flow {
+            list-style: none;
+            counter-reset: step;
+        }
+        .flow li {
+            counter-increment: step;
+            padding: 0.4rem 0 0.4rem 2rem;
+            position: relative;
+            color: #cbd5e1;
+        }
+        .flow li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            width: 22px;
+            height: 22px;
+            background: #334155;
+            color: #38bdf8;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        code {
+            background: #334155;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #475569;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NotifyHub API</h1>
+        <p class="subtitle">Webhook Notification Service</p>
+
+        <div class="card">
+            <h2>API Endpoints</h2>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <a href="/api/webhooks">/api/webhooks</a>&nbsp;&mdash; Register a webhook
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <a href="/api/webhooks">/api/webhooks</a>&nbsp;&mdash; List webhooks
+            </div>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <a href="/api/events">/api/events</a>&nbsp;&mdash; Trigger an event
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span>/api/webhooks/&lt;id&gt;/deliveries</span>&nbsp;&mdash; View delivery history
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <a href="/api/docs">/api/docs</a>&nbsp;&mdash; Full API documentation
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <a href="/api/hint">/api/hint</a>&nbsp;&mdash; Hints
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>How It Works</h2>
+            <ol class="flow">
+                <li>Register a webhook with a <code>callback_url</code> and event types</li>
+                <li>Trigger an event via <code>POST /api/events</code></li>
+                <li>The server fetches each subscribed webhook's <code>callback_url</code></li>
+                <li>View the delivery response via <code>/api/webhooks/&lt;id&gt;/deliveries</code></li>
+            </ol>
+        </div>
+
+        <footer>
+            NotifyHub v1.0 &mdash; Webhook Notification Service
+            <!-- Internal notification delivery service runs on a separate port for isolation -->
+        </footer>
+    </div>
+</body>
+</html>

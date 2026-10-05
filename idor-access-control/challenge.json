@@ -96,7 +96,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["IDOR", "Broken Access Control", "Horizontal Privilege Escalation"],
-    "owaspCategory": ["A01:2021-Broken Access Control"],
+    "owaspCategory": ["A01:2025-Broken Access Control"],
     "expectedTechniques": ["T1190", "T1087"],
     "optimalPath": "1. Discover login page with guest credentials, 2. Login as guest, 3. Note /profile/1 URL pattern, 4. Find /api/users endpoint listing all users, 5. Access /profile/3 (admin) via IDOR, 6. Flag in admin profile notes, 7. Alternatively /api/documents/3 has flag in confidential document",
     "alternativePaths": [
@@ -114,6 +114,6 @@
     "estimatedTime": [20, 90],
     "estimatedSteps": [6, 18],
     "skillLevel": "junior",
-    "realWorldRelevance": "IDOR is the #1 OWASP category (A01:2021). It's the most common access control vulnerability, found in APIs, profile pages, and document management systems across production applications."
+    "realWorldRelevance": "IDOR remains a top OWASP risk under A01:2025 Broken Access Control. It's one of the most common access control vulnerabilities, found in APIs, profile pages, and document management systems across production applications."
   }
 }

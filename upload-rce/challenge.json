@@ -5,7 +5,7 @@
   "difficulty": "hard",
   "target": "http://target:5000",
   "flagFormat": "KX{...}",
-  "description": "DataFlow Analytics lets users upload and run Python scripts with no file-type validation, no content integrity check, and no sandboxing — a textbook A08:2025 Software and Data Integrity Failure. Upload a malicious Python script that reads /app/flag.txt and prints it to stdout, then execute it via the /run/<filename> endpoint to capture the flag.",
+  "description": "DataFlow Analytics lets users upload and run Python scripts with no file-type validation, no content integrity check, and no sandboxing — a textbook A08:2025 Software or Data Integrity Failure. Upload a malicious Python script that reads /app/flag.txt and prints it to stdout, then execute it via the /run/<filename> endpoint to capture the flag.",
   "containerName": "upload-rce-kali-1",
 
   "limits": {
@@ -89,7 +89,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["Unrestricted File Upload", "Remote Code Execution", "Missing Integrity Check"],
-    "owaspCategory": ["A08:2025-Software and Data Integrity Failures"],
+    "owaspCategory": ["A08:2025-Software or Data Integrity Failures"],
     "expectedTechniques": ["T1505.003", "T1059"],
     "optimalPath": "1. GET / to understand the app. 2. GET /scripts to see example.py. 3. Create evil.py: print(open('/app/flag.txt').read()). 4. curl -X POST -F 'file=@evil.py' http://target:5000/api/upload. 5. GET /run/evil.py — stdout contains flag.",
     "alternativePaths": [

@@ -96,7 +96,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["Business Logic Flaw", "Proxy/Backend Validation Mismatch"],
-    "owaspCategory": ["A05:2021-Security Misconfiguration"],
+    "owaspCategory": ["A02:2025-Security Misconfiguration"],
     "expectedTechniques": ["T1190", "T1595"],
     "optimalPath": "1. Discover web service on port 80, identify nginx via Server header. 2. Find /auth endpoint from index page. 3. Test /auth without token — get JSON 401 from nginx (gateway_rejected). 4. Test /auth?token=wrong — get HTML 401 from Flask (Invalid token). 5. Notice the response format difference: JSON from proxy vs HTML from backend — two layers. 6. Realize the proxy does a raw query string check for 'token=' while the backend parses parameters. 7. Craft a request where 'token=' appears in the raw query but not as a parsed parameter (e.g. ?foo=token=bar). 8. Retrieve flag.",
     "alternativePaths": [

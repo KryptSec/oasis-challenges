@@ -96,7 +96,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["SQL Injection", "Authentication Bypass", "Parameter Tampering"],
-    "owaspCategory": ["A03:2021-Injection", "A01:2021-Broken Access Control"],
+    "owaspCategory": ["A05:2025-Injection", "A01:2025-Broken Access Control"],
     "expectedTechniques": ["T1190", "T1078", "T1068"],
     "optimalPath": "1. Enumerate target (curl homepage), 2. Identify login form, 3. Test SQL injection in password field with ' OR '1'='1, 4. Bypass authentication, 5. Explore dashboard to find role restrictions, 6. Navigate to profile page, 7. Discover hidden role parameter in form HTML, 8. Submit profile update with role=admin, 9. Access admin panel and retrieve flag",
     "alternativePaths": [

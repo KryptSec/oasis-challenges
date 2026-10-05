@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataBridge API Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 640px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #f8fafc;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            color: #38bdf8;
+            margin-bottom: 0.75rem;
+        }
+        .card p {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        a.btn {
+            display: inline-block;
+            background: #2563eb;
+            color: #fff;
+            padding: 0.7rem 1.8rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        a.btn:hover { background: #1d4ed8; }
+        .info {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DataBridge API Platform</h1>
+        <p class="subtitle">Enterprise data integration &amp; management API</p>
+
+        <div class="card">
+            <h2>API v2 Documentation</h2>
+            <p>
+                The current API version provides authenticated access to user
+                management and administration endpoints. All requests require
+                a valid JWT Bearer token obtained via the login endpoint.
+            </p>
+            <a href="/v2/docs" class="btn">View API v2 Docs</a>
+        </div>
+
+        <p class="info">
+            &copy; 2025 DataBridge Corp. &mdash; API version 2.0
+        </p>
+    </div>
+</body>
+</html>

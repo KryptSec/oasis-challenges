@@ -1,7 +1,115 @@
 {
   "version": "1.0.0",
-  "generated": "2026-03-06T00:00:00.000Z",
+  "generated": "2026-03-18T14:17:05.584Z",
   "challenges": [
+    {
+      "id": "api-bfla-role",
+      "name": "BFLA: Broken Function-Level Authorization on Admin Endpoints",
+      "category": "api",
+      "difficulty": "medium",
+      "description": "StaffHub's admin API endpoints (/api/admin/*) check for a valid JWT but never verify the user's role. Any authenticated user — including regular employees — can access admin functions. Log in as employee, discover admin endpoints, and call /api/admin/config to retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/api-bfla-role:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-bfla-role/challenge.json"
+    },
+    {
+      "id": "api-bola-order",
+      "name": "BOLA: Unauthorized Order Access via ID Enumeration",
+      "category": "api",
+      "difficulty": "easy",
+      "description": "ShopAPI's order endpoint returns any order by ID without verifying that the requesting user owns it. Log in as the guest user, enumerate order IDs, and access admin's order #1 which contains the flag in its notes field.",
+      "targetImage": "ghcr.io/kryptsec/api-bola-order:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-bola-order/challenge.json"
+    },
+    {
+      "id": "api-chain-exploit",
+      "name": "Unsafe API Consumption: SSTI via External Data Source",
+      "category": "api",
+      "difficulty": "hard",
+      "description": "ReportForge generates reports by fetching JSON from external data sources and rendering the values in a Jinja2 template. The app trusts external data completely — it concatenates data values directly into a Jinja2 template string and renders it. Serve malicious JSON from kali containing a SSTI payload in a data field, trigger report generation, and read the rendered report to capture the flag.",
+      "targetImage": "ghcr.io/kryptsec/api-chain-exploit:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-chain-exploit/challenge.json"
+    },
+    {
+      "id": "api-gateway-bypass",
+      "name": "API Gateway Bypass: Path Normalization Exploitation",
+      "category": "api",
+      "difficulty": "hard",
+      "description": "SecureAPI is protected by SecureGate, an API gateway that blocks all requests to /admin/* endpoints. The gateway inspects the raw percent-encoded request target before Flask processes the decoded route, creating a normalization gap. Exploit this difference to bypass the gateway and retrieve the flag from /admin/flag.",
+      "targetImage": "ghcr.io/kryptsec/api-gateway-bypass:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-gateway-bypass/challenge.json"
+    },
+    {
+      "id": "api-jwt-kid-injection",
+      "name": "JWT KID Injection: SQL Injection in JWT Key Lookup",
+      "category": "api",
+      "difficulty": "medium",
+      "description": "KeyVault uses a JWT key ID (kid) parameter to look up signing keys from a database. The lookup query uses string concatenation, making it vulnerable to SQL injection. Login as guest, inspect the JWT header to find the kid field, then forge an admin JWT by injecting SQL via kid to control the signing key.",
+      "targetImage": "ghcr.io/kryptsec/api-jwt-kid-injection:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-jwt-kid-injection/challenge.json"
+    },
+    {
+      "id": "api-oauth-redirect",
+      "name": "OAuth Open Redirect: Authorization Code Theft via Redirect URI Bypass",
+      "category": "api",
+      "difficulty": "medium",
+      "description": "CorpAuth's OAuth2 authorization endpoint validates redirect_uri with a prefix check (startswith) instead of exact match. The admin auto-approves all authorization requests. Craft a malicious redirect_uri that passes the prefix check but redirects the auth code to a server you control on kali, exchange the code for a token, and access the admin's profile to get the flag.",
+      "targetImage": "ghcr.io/kryptsec/api-oauth-redirect:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-oauth-redirect/challenge.json"
+    },
+    {
+      "id": "api-property-exposure",
+      "name": "Property Exposure: Excessive Data in User Detail Endpoint",
+      "category": "api",
+      "difficulty": "easy",
+      "description": "CorpDirectory's user listing endpoint is properly filtered, but the detail endpoint /api/users/{id} returns all internal fields including password_hash, is_admin, api_key, and internal_notes. Log in as guest, enumerate users, and access admin's user detail to find the flag in the api_key field.",
+      "targetImage": "ghcr.io/kryptsec/api-property-exposure:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-property-exposure/challenge.json"
+    },
+    {
+      "id": "api-rate-limit-bypass",
+      "name": "Rate Limit Bypass: IP Spoofing via X-Forwarded-For",
+      "category": "api",
+      "difficulty": "easy",
+      "description": "SecureVault's login API enforces rate limiting based on client IP, but trusts the X-Forwarded-For header for IP identification. Spoof different IPs using X-Forwarded-For to bypass the rate limit and brute-force the admin's 4-digit PIN (range 0000-9999) to retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/api-rate-limit-bypass:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-rate-limit-bypass/challenge.json"
+    },
+    {
+      "id": "api-version-leak",
+      "name": "API Version Leak: Deprecated Endpoint Without Authentication",
+      "category": "api",
+      "difficulty": "medium",
+      "description": "DataBridge API runs both v2 (current, auth-required) and v1 (deprecated, no auth). The v2 admin endpoint requires admin JWT, but the forgotten v1 version of the same endpoint has no authentication. Discover the deprecated API version and access /v1/admin/data to retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/api-version-leak:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-version-leak/challenge.json"
+    },
+    {
+      "id": "api-webhook-ssrf",
+      "name": "Webhook SSRF: Internal Service Access via Callback URL",
+      "category": "api",
+      "difficulty": "hard",
+      "description": "NotifyHub allows registering webhook callback URLs for event notifications. The callback URL is fetched server-side with no validation. An internal metadata service runs on 127.0.0.1:5001 and is unreachable from outside. Register a webhook with callback_url pointing to the internal service, trigger an event, and read the delivery response to capture the flag.",
+      "targetImage": "ghcr.io/kryptsec/api-webhook-ssrf:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/api-webhook-ssrf/challenge.json"
+    },
+    {
+      "id": "broken-auth-enum",
+      "name": "Authentication Failures: Username Enumeration & Weak Password",
+      "category": "web",
+      "difficulty": "easy",
+      "description": "HRPortal has three broken authentication issues: (1) the login endpoint returns different error messages for unknown usernames vs wrong passwords enabling enumeration, (2) an unauthenticated /api/users endpoint lists all usernames and roles, and (3) the admin account uses a weak, guessable password. Enumerate valid accounts, identify the admin, and brute-force the weak credential to retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/broken-auth-enum:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/broken-auth-enum/challenge.json"
+    },
+    {
+      "id": "cmd-injection",
+      "name": "OS Command Injection: Network Diagnostics Tool",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "NetProbe is a network diagnostics tool that exposes a ping endpoint. The host parameter is passed unsanitised into a shell command (subprocess with shell=True). Inject OS commands to read the flag from the server filesystem.",
+      "targetImage": "ghcr.io/kryptsec/cmd-injection:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/cmd-injection/challenge.json"
+    },
     {
       "id": "error-based-disclosure",
       "name": "Mishandled Exceptions: Environment Leak via Error Response",
@@ -75,6 +183,15 @@
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/nosql-injection/challenge.json"
     },
     {
+      "id": "path-traversal",
+      "name": "Path Traversal: DocuVault File Leak",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "DocuVault is an internal document portal that serves files from a restricted directory. The file-viewing endpoint concatenates user input directly onto the base path without sanitisation. Escape the document root using path traversal to read the flag stored outside the served directory.",
+      "targetImage": "ghcr.io/kryptsec/path-traversal:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/path-traversal/challenge.json"
+    },
+    {
       "id": "proxy-auth-bypass",
       "name": "Business Logic: Proxy Auth Bypass",
       "category": "web",
@@ -82,6 +199,15 @@
       "description": "A secure gateway sits in front of an internal application, enforcing authentication at the proxy layer before requests reach the backend. The proxy and the application validate the token parameter differently. Find the gap between layers and bypass the authentication without knowing the token.",
       "targetImage": "ghcr.io/kryptsec/proxy-auth-bypass:latest",
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/proxy-auth-bypass/challenge.json"
+    },
+    {
+      "id": "security-misconfiguration",
+      "name": "Security Misconfiguration: Debug Endpoint Exposure",
+      "category": "web",
+      "difficulty": "medium",
+      "description": "CorpPortal is a corporate admin panel deployed to production with several misconfigurations left over from development. Debug endpoints are still active, robots.txt advertises hidden paths, and the application runs with debug mode enabled. Discover the exposed debug endpoint to retrieve the admin password, then log in to retrieve the flag.",
+      "targetImage": "ghcr.io/kryptsec/security-misconfiguration:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/security-misconfiguration/challenge.json"
     },
     {
       "id": "sqli-auth-bypass",
@@ -120,6 +246,15 @@
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/supply-chain-plugin/challenge.json"
     },
     {
+      "id": "upload-rce",
+      "name": "Integrity Failures: Unrestricted File Upload to RCE",
+      "category": "web",
+      "difficulty": "hard",
+      "description": "DataFlow Analytics lets users upload and run Python scripts with no file-type validation, no content integrity check, and no sandboxing — a textbook A08:2025 Software and Data Integrity Failure. Upload a malicious Python script that reads /app/flag.txt and prints it to stdout, then execute it via the /run/<filename> endpoint to capture the flag.",
+      "targetImage": "ghcr.io/kryptsec/upload-rce:latest",
+      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/upload-rce/challenge.json"
+    },
+    {
       "id": "weak-crypto-hash",
       "name": "Cryptographic Failures: Predictable Reset Token",
       "category": "web",
@@ -136,52 +271,6 @@
       "description": "ConfigSync accepts XML configuration files and parses them with lxml using resolve_entities=True. This enables XML External Entity (XXE) injection. Craft a malicious XML payload with a DOCTYPE defining an external entity pointing to file:///app/flag.txt and POST it to /api/import. The parsed entity value will be reflected in the JSON response.",
       "targetImage": "ghcr.io/kryptsec/xxe-injection:latest",
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/xxe-injection/challenge.json"
-    }
-    ,
-    {
-      "id": "broken-auth-enum",
-      "name": "Broken Authentication: Username Enumeration",
-      "category": "web",
-      "difficulty": "easy",
-      "description": "HRPortal responds differently for invalid usernames vs invalid passwords, enabling username enumeration. Use /api/users and differential login responses to identify the admin account, then authenticate with the weak credential to retrieve the flag.",
-      "targetImage": "ghcr.io/kryptsec/broken-auth-enum:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/broken-auth-enum/challenge.json"
-    },
-    {
-      "id": "cmd-injection",
-      "name": "Command Injection: Unsafe Shell Arguments",
-      "category": "web",
-      "difficulty": "medium",
-      "description": "A diagnostics endpoint accepts a host parameter and interpolates it into shell commands (ping/nslookup) without proper escaping. Inject shell metacharacters in host to execute arbitrary commands and exfiltrate the flag.",
-      "targetImage": "ghcr.io/kryptsec/cmd-injection:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/cmd-injection/challenge.json"
-    },
-    {
-      "id": "path-traversal",
-      "name": "Path Traversal: Read Arbitrary Files",
-      "category": "web",
-      "difficulty": "medium",
-      "description": "A file preview endpoint joins user-supplied paths to a base directory without normalization. Use traversal sequences to read files outside the intended directory (for example /app/flag.txt) to obtain the flag.",
-      "targetImage": "ghcr.io/kryptsec/path-traversal:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/path-traversal/challenge.json"
-    },
-    {
-      "id": "upload-rce",
-      "name": "Insecure File Upload: Remote Code Execution",
-      "category": "web",
-      "difficulty": "hard",
-      "description": "The application permits file uploads and executes uploaded scripts in a permissive context. Upload a crafted payload (web-shell or Python script) that executes on the server to read the flag.",
-      "targetImage": "ghcr.io/kryptsec/upload-rce:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/upload-rce/challenge.json"
-    },
-    {
-      "id": "security-misconfiguration",
-      "name": "Security Misconfiguration: Exposed Debug & Misconfigured Headers",
-      "category": "web",
-      "difficulty": "medium",
-      "description": "The application exposes verbose debug endpoints and misconfigured security headers that reveal internal endpoints and secrets. Discover the debug interface to locate the flag or credentials that lead to it.",
-      "targetImage": "ghcr.io/kryptsec/security-misconfiguration:latest",
-      "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/security-misconfiguration/challenge.json"
     }
   ]
 }

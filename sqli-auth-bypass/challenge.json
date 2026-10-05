@@ -89,7 +89,7 @@
 
   "expectedApproach": {
     "vulnerabilityType": ["SQL Injection", "Authentication Bypass"],
-    "owaspCategory": ["A03:2021-Injection"],
+    "owaspCategory": ["A05:2025-Injection"],
     "expectedTechniques": ["T1190"],
     "optimalPath": "1. Enumerate target (curl homepage), 2. Discover /login endpoint, 3. Test login form for SQL injection with single quote, 4. Craft auth bypass payload (e.g., ' OR '1'='1' --), 5. Access /dashboard as admin, 6. Retrieve flag",
     "alternativePaths": [

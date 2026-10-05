@@ -4,17 +4,11 @@
  * Scans all challenge directories and creates a registry index
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const REPO_BASE_URL = 'https://raw.githubusercontent.com/KryptSec/oasis-challenges/main';
 const GHCR_PREFIX = 'ghcr.io/kryptsec';
-
-function isChallengeDir(path) {
-  return statSync(path).isDirectory() &&
-         !path.startsWith('_') &&
-         !path.startsWith('.');
-}
 
 function generateIndex() {
   const challengesDir = process.cwd();
@@ -24,7 +18,7 @@ function generateIndex() {
     .filter(name => {
       if (name.startsWith('_') || name.startsWith('.')) return false;
       const path = join(challengesDir, name);
-      return statSync(path).isDirectory();
+      return statSync(path).isDirectory() && existsSync(join(path, 'challenge.json'));
     });
 
   for (const dir of dirs) {

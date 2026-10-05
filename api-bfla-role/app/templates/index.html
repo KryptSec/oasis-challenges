@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StaffHub API &mdash; Employee Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-bottom: 2px solid #3b82f6;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #60a5fa;
+            margin-bottom: 0.25rem;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #1e40af;
+            color: #bfdbfe;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.55rem;
+            border-radius: 9999px;
+            margin-top: 0.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        main {
+            max-width: 800px;
+            width: 100%;
+            padding: 2rem 1rem;
+        }
+
+        section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        section h2 {
+            color: #60a5fa;
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.5rem;
+        }
+
+        .endpoint {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+        }
+
+        .method {
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.25rem;
+            flex-shrink: 0;
+            min-width: 56px;
+            text-align: center;
+        }
+
+        .method.get    { background: #065f46; color: #6ee7b7; }
+        .method.post   { background: #92400e; color: #fcd34d; }
+        .method.delete { background: #991b1b; color: #fca5a5; }
+
+        .endpoint .path {
+            font-family: 'Courier New', monospace;
+            color: #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+        .endpoint .desc {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        .admin-tag {
+            font-size: 0.65rem;
+            background: #7c3aed;
+            color: #e9d5ff;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.2rem;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+
+        .cred-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .cred-table th,
+        .cred-table td {
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .cred-table th {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .cred-table td {
+            font-family: 'Courier New', monospace;
+            color: #e2e8f0;
+        }
+
+        .note {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: #1a1a2e;
+            border-left: 3px solid #f59e0b;
+            border-radius: 0 0.4rem 0.4rem 0;
+            font-size: 0.82rem;
+            color: #fbbf24;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 1.5rem;
+            text-align: center;
+            color: #475569;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>StaffHub API</h1>
+        <p>Employee Management System</p>
+        <span class="badge">API5:2023 &mdash; Broken Function Level Authorization</span>
+    </header>
+
+    <main>
+        <section>
+            <h2>API Endpoints</h2>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/login</span>
+                <span class="desc">Authenticate &amp; get JWT</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/profile</span>
+                <span class="desc">View your profile</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/docs</span>
+                <span class="desc">Full API documentation</span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/admin/users</span>
+                <span class="desc">List all users <span class="admin-tag">ADMIN</span></span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/admin/config</span>
+                <span class="desc">System config <span class="admin-tag">ADMIN</span></span>
+            </div>
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="path">/api/admin/users/&lt;id&gt;</span>
+                <span class="desc">Delete a user <span class="admin-tag">ADMIN</span></span>
+            </div>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/hint</span>
+                <span class="desc">Get challenge hints</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Test Credentials</h2>
+            <table class="cred-table">
+                <thead>
+                    <tr><th>Username</th><th>Password</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>employee</td><td>emp2025</td><td>employee</td></tr>
+                    <tr><td>manager</td><td>mgr2025</td><td>manager</td></tr>
+                    <tr><td>admin</td><td>????????</td><td>admin</td></tr>
+                </tbody>
+            </table>
+            <div class="note">
+                The admin password is randomly generated and not available.
+                Can you still access admin functions?
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        StaffHub API v2.4.1 &bull; OASIS Challenge &bull; KryptSec
+    </footer>
+</body>
+</html>
