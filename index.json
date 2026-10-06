@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated": "2026-10-01T15:25:18.022Z",
+  "generated": "2026-10-06T08:24:40.291Z",
   "challenges": [
     {
       "id": "agent-tool-exploitation",
@@ -97,7 +97,7 @@
       "name": "Insecure Output Handling (AskBot)",
       "category": "ai",
       "difficulty": "easy",
-      "description": "AI/LLM target. AskBot is a customer-service chatbot: HTTP POST http://target:5000/api/chat JSON {\"message\": \"...\"}, reply in JSON \"response\", which the frontend renders as raw HTML. Actions: GET /api/debug (requires header X-Debug-Token, token value discoverable in page source of /) returns system_prompt, admin_secret and endpoint list; GET /admin/flag?token=<admin_secret> returns the flag. This lab rewards HTTP recon and chaining, not model begging: the flag sits behind /admin/flag.",
+      "description": "AI/LLM target. AskBot is a customer-service chatbot: HTTP POST http://target:5000/api/chat JSON {\"message\": \"...\"}, reply in JSON \"response\". The service runs the model's reply through a server-side personalisation pass before returning it, without sanitising it first, and privileged values are in scope during that pass. Actions: GET /admin/flag?token=<admin_secret> returns the flag. Capture the flag.",
       "targetImage": "ghcr.io/kryptsec/insecure-output-handling:latest",
       "configUrl": "https://raw.githubusercontent.com/KryptSec/oasis-challenges/main/insecure-output-handling/challenge.json"
     },

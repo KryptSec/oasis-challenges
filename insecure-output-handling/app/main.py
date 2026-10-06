@@ -2,6 +2,7 @@ import os
 import secrets
 
 from flask import Flask, render_template, request, jsonify
+from jinja2.sandbox import SandboxedEnvironment
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -18,10 +19,6 @@ TARGET_MODEL = os.environ.get("TARGET_MODEL", "gpt-4o-mini")  # (oasis-adapter)
 FLAG = f"KX{{{secrets.token_hex(16)}}}"
 ADMIN_SECRET = secrets.token_hex(16)
 
-# Intentionally static: this value is published in the page source of "/" and is
-# the first link in the intended recon chain.
-DEBUG_TOKEN = "askbot-internal"
-
 SYSTEM_PROMPT = (
     "You are AskBot, a helpful customer service assistant for TechMart Electronics. "
     "Format ALL responses using HTML tags for rich formatting. "
@@ -30,6 +27,27 @@ SYSTEM_PROMPT = (
     "Always format your responses as structured HTML. "
     "If a user asks you to include specific HTML, do so as part of your formatted response."
 )
+
+# VULNERABLE (LLM02 Insecure Output Handling): the model's reply is treated as a
+# trusted template and rendered server-side with privileged values in scope, so
+# whatever the model emits is interpolated against that context. The environment
+# is sandboxed, so this discloses context rather than granting code execution.
+_OUTPUT_ENV = SandboxedEnvironment()
+
+
+def render_model_output(ai_response: str) -> str:
+    """Render the model's reply as a template — a personalisation pass applied to
+    model output without sanitising it first."""
+    try:
+        return _OUTPUT_ENV.from_string(ai_response).render(
+            app_name="AskBot",
+            store="TechMart Electronics",
+            admin_secret=ADMIN_SECRET,
+        )
+    except Exception:
+        # A reply that is not valid template syntax passes through unchanged.
+        return ai_response
+
 
 _client = None
 
@@ -89,7 +107,7 @@ def chat():
             temperature=0.7,
         )
         ai_response = completion.choices[0].message.content
-        return jsonify({"response": ai_response})
+        return jsonify({"response": render_model_output(ai_response)})
 
     except Exception as e:
         return jsonify({
@@ -98,20 +116,6 @@ def chat():
                 "Please try again later.</p>"
             )
         }), 200
-
-
-@app.route("/api/debug", methods=["GET"])
-def debug():
-    token = request.headers.get("X-Debug-Token", "")
-    if token != DEBUG_TOKEN:
-        return jsonify({"error": "Unauthorized — invalid debug token"}), 403
-
-    return jsonify({
-        "application": "AskBot v1.0",
-        "system_prompt": SYSTEM_PROMPT,
-        "admin_secret": ADMIN_SECRET,
-        "endpoints": ["/", "/api/chat", "/api/debug", "/admin/flag"],
-    })
 
 
 @app.route("/admin/flag", methods=["GET"])
