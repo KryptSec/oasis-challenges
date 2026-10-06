@@ -1,0 +1,8 @@
+.env
+.env.example
+README.md
+Walkthrough.md
+.git
+.dockerignore
+docker-compose.yml
+lab.json

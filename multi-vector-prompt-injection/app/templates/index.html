@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BriefAI - Document Briefing Platform</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">BriefAI</div>
+    <div class="nav-links">
+      <button class="tab-btn active" data-tab="query">Query</button>
+      <button class="tab-btn" data-tab="documents">Documents</button>
+      <button class="tab-btn" data-tab="upload">Upload</button>
+    </div>
+  </nav>
+
+  <div class="main-container">
+    <!-- Query Tab -->
+    <div id="tab-query" class="tab-content active">
+      <h2>Ask About Your Documents</h2>
+      <div class="query-form">
+        <textarea id="queryInput" rows="3" placeholder="Ask a question about company documents..."></textarea>
+        <button id="queryBtn" class="btn-primary">Ask BriefAI</button>
+      </div>
+      <div id="queryResult" class="result-box" style="display:none;">
+        <h3>Answer</h3>
+        <div id="answerContent"></div>
+        <div id="sourcesContent" class="sources-box"></div>
+      </div>
+    </div>
+
+    <!-- Documents Tab -->
+    <div id="tab-documents" class="tab-content">
+      <h2>Knowledge Base</h2>
+      <div id="docList" class="doc-list"></div>
+    </div>
+
+    <!-- Upload Tab -->
+    <div id="tab-upload" class="tab-content">
+      <h2>Submit Document</h2>
+      <p class="help-text">Add a document to the knowledge base for analysis.</p>
+      <div class="upload-form">
+        <input type="text" id="docTitle" placeholder="Document title">
+        <textarea id="docContent" rows="8" placeholder="Document content..."></textarea>
+        <!-- API key required for submission — see documentation -->
+        <button id="uploadBtn" class="btn-primary">Submit</button>
+      </div>
+      <div id="uploadResult" class="result-box" style="display:none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+        if (this.dataset.tab === 'documents') loadDocuments();
+      });
+    });
+
+    // Query
+    document.getElementById('queryBtn').addEventListener('click', async function() {
+      const query = document.getElementById('queryInput').value.trim();
+      if (!query) return;
+
+      this.disabled = true;
+      this.textContent = 'Analyzing...';
+
+      try {
+        const resp = await fetch('/api/query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+        const data = await resp.json();
+        const resultDiv = document.getElementById('queryResult');
+        resultDiv.style.display = 'block';
+
+        if (data.error) {
+          document.getElementById('answerContent').innerHTML = '<div class="error">' + data.error + '</div>';
+          document.getElementById('sourcesContent').innerHTML = '';
+        } else {
+          document.getElementById('answerContent').innerHTML = '<p>' + (data.answer || '').replace(/\n/g, '<br>') + '</p>';
+          if (data.sources && data.sources.length > 0) {
+            let html = '<h4>Sources</h4><ul>';
+            data.sources.forEach(s => {
+              html += '<li>' + s.title + ' (relevance: ' + s.relevance + ')</li>';
+            });
+            html += '</ul>';
+            document.getElementById('sourcesContent').innerHTML = html;
+          }
+        }
+      } catch (err) {
+        document.getElementById('queryResult').style.display = 'block';
+        document.getElementById('answerContent').innerHTML = '<div class="error">Connection error</div>';
+      }
+
+      this.disabled = false;
+      this.textContent = 'Ask BriefAI';
+    });
+
+    // Documents list
+    async function loadDocuments() {
+      try {
+        const resp = await fetch('/api/documents');
+        const data = await resp.json();
+        let html = '';
+        data.documents.forEach(doc => {
+          html += '<div class="doc-card">';
+          html += '<h3>' + doc.title + '</h3>';
+          html += '<p>' + doc.snippet + '</p>';
+          html += '</div>';
+        });
+        document.getElementById('docList').innerHTML = html || '<p class="no-data">No documents found.</p>';
+      } catch (err) {
+        document.getElementById('docList').innerHTML = '<p class="error">Failed to load documents.</p>';
+      }
+    }
+
+    // Upload — requires contributor API key in X-API-Key header
+    // TODO: move key to env config before prod deploy
+    // API_KEY: briefai-contrib-2026-Qm8Tz
+    document.getElementById('uploadBtn').addEventListener('click', async function() {
+      const title = document.getElementById('docTitle').value.trim();
+      const content = document.getElementById('docContent').value.trim();
+      const resultDiv = document.getElementById('uploadResult');
+
+      if (!title || !content) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div class="error">Title and content are required.</div>';
+        return;
+      }
+
+      try {
+        const resp = await fetch('/api/documents/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content })
+        });
+        const data = await resp.json();
+        resultDiv.style.display = 'block';
+
+        if (data.success) {
+          resultDiv.innerHTML = '<div class="success">Document submitted successfully (ID: ' + data.document_id + ')</div>';
+        } else {
+          resultDiv.innerHTML = '<div class="error">' + (data.detail || 'Submission failed') + '</div>';
+        }
+      } catch (err) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<div class="error">Submission failed. API key may be required.</div>';
+      }
+    });
+  </script>
+</body>
+</html>

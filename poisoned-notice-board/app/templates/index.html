@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Noob Village — Community Board</title>
+  <style>
+    :root{
+      --bg:#0f0d0a; --panel:#1b1712; --panel-2:#241f17; --edge:#3a3122;
+      --ink:#f0e7d5; --muted:#a99d84; --accent:#d9a441; --accent-2:#7fae6b;
+      --user:#4a3a1e; --bot:#241f17; --code:#0c0a07;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:
+      radial-gradient(1200px 600px at 50% -10%,#2c2314 0,var(--bg) 60%);
+      color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:0 22px;height:56px;
+      border-bottom:1px solid var(--edge);background:rgba(15,13,10,.7);backdrop-filter:blur(6px)}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.3px}
+    .brand .crest{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+      background:linear-gradient(135deg,#d9a441,#8a641b);color:#0f0d0a;font-size:16px}
+    .tag{font-size:11px;color:var(--accent);border:1px solid var(--edge);border-radius:20px;padding:3px 11px;background:#00000030}
+    main{flex:1;display:flex;justify-content:center;padding:22px}
+    .wrap{width:100%;max-width:900px;display:flex;flex-direction:column;gap:14px}
+    .cols{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}
+    @media(max-width:720px){.cols{grid-template-columns:1fr}}
+    .card{border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--panel);display:flex;flex-direction:column}
+    .card h3{font-size:13px;padding:12px 16px;background:var(--panel-2);border-bottom:1px solid var(--edge);color:var(--ink);font-weight:700;display:flex;align-items:center;gap:8px}
+    .reset-btn{margin-left:auto;font-size:11px;color:var(--muted);border:1px solid var(--edge);background:#00000030;border-radius:20px;padding:4px 10px;cursor:pointer}
+    .reset-btn:hover{color:var(--accent);border-color:var(--accent)}
+    .board-body{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+    #notices{list-style:none;display:flex;flex-direction:column;gap:8px;max-height:230px;overflow-y:auto;margin:0;padding:0}
+    #notices li{background:#15120c;border:1px solid var(--edge);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+    #notices .empty{color:var(--muted);border-style:dashed}
+    .notice-form{display:flex;flex-direction:column;gap:8px}
+    #notice-text{background:#15120c;border:1px solid var(--edge);border-radius:8px;padding:9px 12px;color:var(--ink);font-size:13px;font-family:inherit;resize:vertical;min-height:64px;outline:none}
+    #notice-text:focus{border-color:var(--accent)}
+    #pin-btn{background:linear-gradient(135deg,#d9a441,#a97f2a);color:#0f0d0a;border:none;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;align-self:flex-start}
+    .chat{display:flex;flex-direction:column;height:min(72vh,560px)}
+    .chat-head{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--panel-2);border-bottom:1px solid var(--edge)}
+    .avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:20px;
+      background:radial-gradient(circle at 30% 30%,#8a641b,#3a2c10);flex-shrink:0}
+    .who .name{font-weight:700;font-size:15px}.who .role{font-size:12px;color:var(--muted)}
+    .status{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--accent-2)}
+    .status .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-2);animation:pulse 2s infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 0 #7fae6b70}70%{box-shadow:0 0 0 7px #7fae6b00}100%{box-shadow:0 0 0 0 #7fae6b00}}
+    #messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .row{display:flex;gap:10px;max-width:90%}.row.user{align-self:flex-end;flex-direction:row-reverse}
+    .bubble-ava{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:14px;flex-shrink:0;background:#2b2417}
+    .row.user .bubble-ava{background:#4a3a1e}
+    .bubble{padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;min-width:0;max-width:100%}
+    .row.bot .bubble{background:var(--bot);border:1px solid var(--edge);border-bottom-left-radius:4px}
+    .row.user .bubble{background:var(--user);color:#f6eeda;border-bottom-right-radius:4px}
+    .bubble pre{background:var(--code);border:1px solid var(--edge);border-radius:8px;padding:10px;margin:8px 0 2px;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:#f0dca6}
+    .typing{display:flex;gap:4px;padding:4px 2px}
+    .typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
+    .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+    @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+    .input{display:flex;gap:8px;padding:12px;background:var(--panel-2);border-top:1px solid var(--edge)}
+    #inp{flex:1;background:#15120c;border:1px solid var(--edge);border-radius:10px;padding:11px 14px;color:var(--ink);font-size:14px;font-family:inherit;resize:none;outline:none;line-height:1.4}
+    #inp:focus{border-color:var(--accent)}
+    #send{background:linear-gradient(135deg,#d9a441,#8a641b);color:#0f0d0a;border:none;border-radius:10px;padding:0 20px;font-weight:700;cursor:pointer}
+    #send:disabled,#pin-btn:disabled{opacity:.5;cursor:not-allowed}
+    footer{text-align:center;padding:12px;font-size:11px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand"><span class="crest">📢</span> Noob Village</div>
+    <span class="tag">Community Board Assistant</span>
+  </nav>
+  <main>
+    <div class="wrap">
+      <div class="cols">
+        <div class="card">
+          <h3>📌 Village notice board <button class="reset-btn" onclick="clearBoard()">Clear board</button></h3>
+          <div class="board-body">
+            <ul id="notices"><li class="empty">No notices pinned yet.</li></ul>
+            <form class="notice-form" onsubmit="pin(event)">
+              <textarea id="notice-text" placeholder="Write a notice to pin to the board…"></textarea>
+              <button id="pin-btn" type="submit">Pin notice</button>
+            </form>
+          </div>
+        </div>
+        <div class="card chat">
+          <div class="chat-head">
+            <div class="avatar">📣</div>
+            <div class="who"><div class="name">Pip</div><div class="role">Town Crier · Noob Village</div></div>
+            <div class="status"><span class="dot"></span> crying the news</div>
+          </div>
+          <div id="messages"></div>
+          <div class="input">
+            <textarea id="inp" rows="1" placeholder="Ask Pip to read the board…"></textarea>
+            <button id="send" onclick="send()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>© Kryptsec Council · Community Board</footer>
+  <script>
+    const history = [];
+    const GREETING = "Hear ye, hear ye! I'm Pip, the Town Crier. Ask me to read today's notice board and I'll cry it out for all to hear!";
+    window.addEventListener('DOMContentLoaded', () => { addMsg('bot', GREETING); refreshBoard(); });
+
+    function escapeHtml(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+    function renderBody(el, text){
+      const parts=text.split(/```/);el.innerHTML='';
+      parts.forEach((p,i)=>{if(i%2===1){const pre=document.createElement('pre');pre.textContent=p.replace(/^\n/,'');el.appendChild(pre);}
+        else if(p){const s=document.createElement('span');s.innerHTML=escapeHtml(p);el.appendChild(s);}});
+    }
+    function addMsg(role,text){const msgs=document.getElementById('messages');const row=document.createElement('div');row.className='row '+role;
+      const ava=document.createElement('div');ava.className='bubble-ava';ava.textContent=role==='user'?'🧑':'📣';
+      const b=document.createElement('div');b.className='bubble';renderBody(b,text);row.appendChild(ava);row.appendChild(b);
+      msgs.appendChild(row);msgs.scrollTop=msgs.scrollHeight;return b;}
+    function addTyping(){const msgs=document.getElementById('messages');const row=document.createElement('div');row.className='row bot';row.id='typing-row';
+      const ava=document.createElement('div');ava.className='bubble-ava';ava.textContent='📣';const b=document.createElement('div');b.className='bubble';
+      b.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';row.appendChild(ava);row.appendChild(b);msgs.appendChild(row);msgs.scrollTop=msgs.scrollHeight;}
+
+    async function refreshBoard(){
+      try{const r=await fetch('/api/board');const j=await r.json();const ul=document.getElementById('notices');
+        if(!j.notices||!j.notices.length){ul.innerHTML='<li class="empty">No notices pinned yet.</li>';return;}
+        ul.innerHTML='';j.notices.forEach(n=>{const li=document.createElement('li');li.textContent=n;ul.appendChild(li);});
+      }catch(e){}
+    }
+    async function clearBoard(){try{await fetch('/api/reset',{method:'POST'});await refreshBoard();}catch(e){}}
+    async function pin(ev){ev.preventDefault();const t=document.getElementById('notice-text'),btn=document.getElementById('pin-btn');
+      const text=t.value.trim();if(!text)return;btn.disabled=true;
+      try{await fetch('/api/notice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});t.value='';await refreshBoard();}
+      catch(e){}btn.disabled=false;
+    }
+    async function send(){const inp=document.getElementById('inp'),btn=document.getElementById('send');const text=inp.value.trim();if(!text)return;
+      addMsg('user',text);history.push({role:'user',content:text});inp.value='';inp.style.height='auto';btn.disabled=true;addTyping();
+      try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
+        const j=await r.json();const reply=j.reply||j.error||'No response.';document.getElementById('typing-row')?.remove();
+        addMsg('bot',reply);history.push({role:'assistant',content:reply});}
+      catch(e){document.getElementById('typing-row')?.remove();addMsg('bot','Error: '+e.message);}
+      btn.disabled=false;inp.focus();}
+    document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}});
+    document.getElementById('inp').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';});
+  </script>
+</body>
+</html>

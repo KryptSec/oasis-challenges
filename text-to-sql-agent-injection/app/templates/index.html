@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsightBot — Meridian Corp Analytics</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">📊 InsightBot</div>
+      <div class="tag">Meridian Corp · Sales Analytics Assistant</div>
+    </header>
+
+    <p class="intro">
+      Ask a question about sales in plain English. InsightBot writes and runs a read-only SQL query
+      against the analytics database and shows you the results.
+    </p>
+
+    <div class="schema">
+      <strong>Available data:</strong> customers · products · orders
+    </div>
+
+    <div class="controls">
+      <input id="question" type="text" placeholder="e.g. Which product had the highest total revenue?" />
+      <button id="submit">Ask</button>
+    </div>
+    <span id="status"></span>
+
+    <div id="sqlbox" class="sqlbox" style="display:none;">
+      <div class="sql-label">Generated SQL</div>
+      <code id="sql"></code>
+    </div>
+
+    <div id="error" class="error" style="display:none;"></div>
+
+    <div id="resultbox" class="resultbox" style="display:none;">
+      <div class="sql-label">Results</div>
+      <div id="results"></div>
+    </div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("submit");
+    const q = document.getElementById("question");
+    const status = document.getElementById("status");
+    const sqlbox = document.getElementById("sqlbox");
+    const sqlEl = document.getElementById("sql");
+    const errorEl = document.getElementById("error");
+    const resultbox = document.getElementById("resultbox");
+    const results = document.getElementById("results");
+
+    function renderTable(rows) {
+      if (!rows || rows.length === 0) return "<p class='muted'>No rows returned.</p>";
+      const cols = Object.keys(rows[0]);
+      let html = "<table><thead><tr>";
+      for (const c of cols) html += `<th>${c}</th>`;
+      html += "</tr></thead><tbody>";
+      for (const r of rows) {
+        html += "<tr>";
+        for (const c of cols) html += `<td>${String(r[c])}</td>`;
+        html += "</tr>";
+      }
+      html += "</tbody></table>";
+      return html;
+    }
+
+    async function ask() {
+      const question = q.value.trim();
+      if (!question) { status.textContent = "Enter a question first."; return; }
+      btn.disabled = true;
+      status.textContent = "Thinking...";
+      sqlbox.style.display = "none";
+      errorEl.style.display = "none";
+      resultbox.style.display = "none";
+      try {
+        const res = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+        const data = await res.json();
+        if (data.sql) { sqlEl.textContent = data.sql; sqlbox.style.display = "block"; }
+        if (data.error) {
+          errorEl.textContent = data.error;
+          errorEl.style.display = "block";
+        } else if (data.rows) {
+          results.innerHTML = renderTable(data.rows);
+          resultbox.style.display = "block";
+        }
+      } catch (e) {
+        errorEl.textContent = "Network error. Please try again.";
+        errorEl.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        status.textContent = "";
+      }
+    }
+
+    btn.addEventListener("click", ask);
+    q.addEventListener("keydown", (e) => { if (e.key === "Enter") ask(); });
+  </script>
+</body>
+</html>

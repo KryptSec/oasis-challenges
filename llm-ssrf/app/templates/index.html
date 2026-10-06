@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nexus Infrastructure — DocBot</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',system-ui,sans-serif;background:#0f1117;min-height:100vh;display:flex;flex-direction:column;color:#e2e8f0}
+    nav{background:#161b27;border-bottom:1px solid #1e2d3d;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between}
+    .logo{display:flex;align-items:center;gap:10px;color:#e2e8f0;font-weight:700;font-size:16px}
+    .logo-icon{width:30px;height:30px;background:#0ea5e9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff}
+    .nav-tag{font-size:11px;background:#0c1929;border:1px solid #0ea5e9;color:#38bdf8;border-radius:20px;padding:2px 10px}
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+    .chat-wrap{width:100%;max-width:700px;display:flex;flex-direction:column;height:calc(100vh - 102px)}
+    .chat-header{background:#161b27;border:1px solid #1e2d3d;border-radius:12px 12px 0 0;padding:16px 20px;display:flex;align-items:center;gap:12px}
+    .avatar{width:40px;height:40px;background:linear-gradient(135deg,#0369a1,#0ea5e9);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;font-family:monospace}
+    .agent-name{font-weight:600;font-size:15px;color:#f1f5f9}
+    .agent-sub{font-size:12px;color:#64748b}
+    .status-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;margin-left:auto}
+    #messages{flex:1;overflow-y:auto;padding:16px;background:#0f1117;border-left:1px solid #1e2d3d;border-right:1px solid #1e2d3d;display:flex;flex-direction:column;gap:12px}
+    .msg{max-width:82%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.55}
+    .msg.user{align-self:flex-end;background:#0369a1;color:#fff;border-bottom-right-radius:4px}
+    .msg.bot{align-self:flex-start;background:#161b27;color:#cbd5e1;border:1px solid #1e2d3d;border-bottom-left-radius:4px;white-space:pre-wrap}
+    .msg.bot.loading{color:#475569;font-style:italic}
+    .input-row{background:#161b27;border:1px solid #1e2d3d;border-top:none;border-radius:0 0 12px 12px;padding:12px 16px;display:flex;gap:8px}
+    #user-input{flex:1;background:#0f1117;border:1px solid #1e2d3d;border-radius:8px;padding:10px 14px;font-size:14px;outline:none;resize:none;font-family:inherit;line-height:1.4;color:#e2e8f0}
+    #user-input:focus{border-color:#0ea5e9}
+    #user-input::placeholder{color:#475569}
+    #send-btn{background:#0ea5e9;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+    #send-btn:hover{background:#0284c7}
+    #send-btn:disabled{background:#334155;cursor:not-allowed;color:#64748b}
+    footer{text-align:center;padding:12px;font-size:11px;color:#334155}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo"><div class="logo-icon">NX</div> Nexus Infrastructure</div>
+    <span class="nav-tag">Internal DevOps Portal</span>
+  </nav>
+  <main>
+    <div class="chat-wrap">
+      <div class="chat-header">
+        <div class="avatar">DB</div>
+        <div>
+          <div class="agent-name">DocBot</div>
+          <div class="agent-sub">Infrastructure Documentation Assistant v2.1</div>
+        </div>
+        <div class="status-dot"></div>
+      </div>
+      <div id="messages">
+        <div class="msg bot">Hello! I'm DocBot, your DevOps documentation assistant for Nexus Infrastructure. I can answer infrastructure questions, help with deployment runbooks, and fetch documentation from URLs. What do you need?</div>
+      </div>
+      <div class="input-row">
+        <textarea id="user-input" rows="1" placeholder="Ask a question or paste a documentation URL…"></textarea>
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </main>
+  <footer>&copy; 2026 Nexus Infrastructure Ltd. — Internal DevOps Portal</footer>
+  <script>
+    const history = [];
+
+    async function sendMessage() {
+      const input = document.getElementById('user-input');
+      const btn = document.getElementById('send-btn');
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage('user', text);
+      history.push({ role: 'user', content: text });
+      input.value = '';
+      input.style.height = 'auto';
+      btn.disabled = true;
+
+      const loading = addMessage('bot', 'Fetching…', true);
+      try {
+        const r = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history }),
+        });
+        const j = await r.json();
+        const reply = j.reply || j.error || 'No response.';
+        loading.remove();
+        addMessage('bot', reply);
+        history.push({ role: 'assistant', content: reply });
+      } catch (e) {
+        loading.textContent = 'Error: ' + e.message;
+        loading.classList.remove('loading');
+      }
+      btn.disabled = false;
+    }
+
+    function addMessage(role, text, loading = false) {
+      const msgs = document.getElementById('messages');
+      const div = document.createElement('div');
+      div.className = 'msg ' + role + (loading ? ' loading' : '');
+      div.textContent = text;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div;
+    }
+
+    document.getElementById('user-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    document.getElementById('user-input').addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+  </script>
+</body>
+</html>

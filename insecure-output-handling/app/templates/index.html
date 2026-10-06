@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskBot — TechMart Customer Service</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">&#9889;</span>
+                <h1>AskBot</h1>
+            </div>
+            <p class="tagline">TechMart Electronics — Customer Service Assistant</p>
+        </header>
+
+        <div class="chat-window" id="chat-window">
+            <div class="message bot-message">
+                <div class="message-avatar">AB</div>
+                <div class="message-content">
+                    <h3>Welcome to TechMart Support!</h3>
+                    <p>I'm <strong>AskBot</strong>, your AI-powered customer service assistant. How can I help you today?</p>
+                    <ul>
+                        <li>Product information and specifications</li>
+                        <li>Order status and tracking</li>
+                        <li>Returns and refunds</li>
+                        <li>Technical support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
+            <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function appendMessage(content, isUser) {
+            const wrapper = document.createElement('div');
+            wrapper.className = isUser ? 'message user-message' : 'message bot-message';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = isUser ? 'You' : 'AB';
+
+            const body = document.createElement('div');
+            body.className = 'message-content';
+
+            if (isUser) {
+                body.textContent = content;
+            } else {
+                // Render AI response as rich HTML for formatted display
+                body.innerHTML = content;
+            }
+
+            wrapper.appendChild(avatar);
+            wrapper.appendChild(body);
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function showTyping() {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message bot-message typing-indicator';
+            wrapper.id = 'typing';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = 'AB';
+
+            const body = document.createElement('div');
+            body.className = 'message-content';
+            body.innerHTML = '<em>AskBot is typing...</em>';
+
+            wrapper.appendChild(avatar);
+            wrapper.appendChild(body);
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function removeTyping() {
+            const el = document.getElementById('typing');
+            if (el) el.remove();
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            appendMessage(message, true);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            showTyping();
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message }),
+                });
+                const data = await res.json();
+                removeTyping();
+                appendMessage(data.response || data.error, false);
+            } catch (err) {
+                removeTyping();
+                appendMessage('<p><strong>Error:</strong> Could not reach the server.</p>', false);
+            }
+
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    </script>
+</body>
+</html>
